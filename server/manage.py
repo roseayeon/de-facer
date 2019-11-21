@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, Response, stream_with_context
 from google.cloud import storage
 
 BUCKET_NAME = "kaist-cs470-project"
@@ -23,7 +23,12 @@ def get_target_images():
     
     return jsonify({"images": images})
 
+@app.route("/process", methods=["POST"])
+def process():
+    video = request.files["video"]
+    target = request.files["target"]
+
+    return Response(stream_with_context(video.stream), mimetype=video.mimetype)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80)
-

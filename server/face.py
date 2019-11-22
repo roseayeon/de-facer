@@ -13,7 +13,9 @@ def prewhiten(x):
   y = (x - mean) / std_adj
   return y
 
+MAX_FRAME = 240 # for testing
 FACE_SIZE = 160
+REDUCE_RATE = 0.1
 DIFF_THRESHOLD = 0.9
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 mtcnn = MTCNN(keep_all=True, min_face_size=20, device=device)
@@ -21,8 +23,8 @@ resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 
 def process_video(video_path, targets_path, replace_path, output_path):
   cap = cv2.VideoCapture(video_path)
-  w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-  h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+  video_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+  video_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
   origin_fps = cap.get(cv2.CAP_PROP_FPS)
   count = 0
   # encoding target face
@@ -47,7 +49,9 @@ def process_video(video_path, targets_path, replace_path, output_path):
   
       small_frame = cv2.resize(frame, (0,0), fx=0.25, fy=0.25)
       small_frame = Image.fromarray(cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB))
-      frame = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+      frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+      frame_img = Image.fromarray(frame)
+      frame_w, frame_h = frame_img.size
   
       # Detect faces
       boxes, _ = mtcnn.detect(small_frame) # decrease of face size
@@ -58,23 +62,21 @@ def process_video(video_path, targets_path, replace_path, output_path):
         box = [
           int(max(box[0]*4, 0)),
           int(max(box[1]*4, 0)),
-          int(min(box[2]*4, frame.size[0])),
-          int(min(box[3]*4, frame.size[1])),
+          int(min(box[2]*4, frame_w)),
+          int(min(box[3]*4, frame_h)),
         ]
 
-        face = frame.crop(box).resize((FACE_SIZE, FACE_SIZE), 2)
+        face = frame_img.crop(box).resize((FACE_SIZE, FACE_SIZE), 2)
         face = prewhiten(F.to_tensor(np.float32(face)).to(device))
         faces.append(face)
   
       encodings = resnet(torch.stack(faces)).detach().cpu()
-      frame_draw = frame.copy()
-      draw = ImageDraw.Draw(frame_draw)
       for encoding, box in zip(encodings, boxes):
         box = [
           int(max(box[0]*4, 0)),
           int(max(box[1]*4, 0)),
-          int(min(box[2]*4, frame.size[0])),
-          int(min(box[3]*4, frame.size[1])),
+          int(min(box[2]*4, frame_w)),
+          int(min(box[3]*4, frame_h)),
         ]
 
         target_detected = False
@@ -86,19 +88,29 @@ def process_video(video_path, targets_path, replace_path, output_path):
             break
 
         if not target_detected:
-          draw.rectangle(box, outline=(255, 0, 0), width=6)
+          # Blur face
+          face = frame[box[1]:box[3], box[0]:box[2]]
+          w = box[2]-box[0]
+          h = box[3]-box[1]
+          # select blur method
+          #blurred_face = cv2.GaussianBlur(face, (19,19), 0)
+          blurred_face = cv2.resize(face, (0,0), fx=REDUCE_RATE, fy=REDUCE_RATE)
+          blurred_face = cv2.resize(blurred_face, (w,h), interpolation=cv2.INTER_LINEAR)
+          frame[box[1]:box[3], box[0]:box[2]] = blurred_face
       
       # Add to frame list
-      frames_tracked.append(frame_draw)
-      #if count%100 == 0:
-      #    print ("frame:", count)
+      frames_tracked.append(frame)
     else:
       raise Exception('Reading video should be success')
+
+    #Shortcut
+    if count > MAX_FRAME:
+      break
 
   cap.release()
 
   #print('\rTracking frame: {}'.format(count))
-  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), origin_fps/2, (w,h))
+  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), origin_fps/2, (video_w,video_h))
   for frame in frames_tracked:
     writer.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
   writer.release()

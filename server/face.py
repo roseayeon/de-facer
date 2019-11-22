@@ -21,6 +21,7 @@ resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 
 def process_video(video_path, targets_path, replace_path, output_path):
   cap = cv2.VideoCapture(video_path)
+  origin_fps = cap.get(cv2.CAP_PROP_FPS)
   count = 0
   # encoding target face
   targets_img = []
@@ -86,20 +87,16 @@ def process_video(video_path, targets_path, replace_path, output_path):
           draw.rectangle(box, outline=(255, 0, 0), width=6)
       
       # Add to frame list
-      # doubled frame ti restore fps
-      frames_tracked.append(frame_draw.resize((640, 360), Image.BILINEAR))
       frames_tracked.append(frame_draw.resize((640, 360), Image.BILINEAR))
       #if count%100 == 0:
       #    print ("frame:", count)
-      if count > 300:
-        break
     else:
       raise Exception('Reading video should be success')
 
   cap.release()
 
   #print('\rTracking frame: {}'.format(count))
-  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), len(frames_tracked), (640,360))
+  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), origin_fps/2, (640,360))
   for frame in frames_tracked:
     writer.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
   writer.release()

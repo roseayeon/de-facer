@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, Response, stream_with_context
 from google.cloud import storage
+import face
 
 BUCKET_NAME = "kaist-cs470-project"
 STORAGE_URL_FORMAT = "https://storage.googleapis.com/{}/{}"
@@ -28,6 +29,11 @@ def process():
     video = request.files["video"]
     target = request.files["target"]
 
+    input_path = ""
+    targets_path = [""]
+    replace_path = "" # to blur, should be empty
+    output_path = ""
+    face.process_video(input_path, targets_path, replace_path, output_path)
     return Response(stream_with_context(video.stream), mimetype=video.mimetype)
 
 if __name__ == "__main__":

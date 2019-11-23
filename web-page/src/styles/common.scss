@@ -31,10 +31,10 @@ $home-text-color: #314659;
       will-change: transform;
     }
 
-    .ant-row {
-      display: flex;
-      justify-content: space-around;
-    }
+    // .ant-row {
+    //   display: flex;
+    //   justify-content: space-around;
+    // }
   }
 }
 
@@ -236,132 +236,132 @@ svg {
 
 /** page2 **/
 
-.page2 {
-  min-height: 1110px;
-  padding-top: 1px;
-  overflow: initial;
-  background: #eff3f6;
-  .page {
-    position: relative;
-    z-index: 1;
-    h2 {
-      margin-bottom: 112px;
-    }
-  }
-  &-content {
-    background: $home-bg-color;
-    box-shadow: 0 12px 20px #d8e0e6;
-  }
-  &-components,
-  &-product {
-    min-height: 670px;
-  }
-  &-components {
-    position: initial;
-    padding: 56px;
-    color: #fff;
-    line-height: 32px;
-    background: $home-bg-color;
-    h3 {
-      margin: 0 auto 32px;
-      color: #fff;
-      font-size: 28px;
-    }
-    .components-button-wrapper {
-      position: absolute;
-      bottom: 48px;
-      left: 56px;
-      a {
-        display: block;
-        margin-top: 16px;
-        color: #fff;
-        line-height: 1.5em;
-      }
-    }
-  }
-  &-product {
-    padding: 48px 56px;
-    background: #fff;
-    .product-block {
-      margin-bottom: 24px;
-      color: $home-text-color;
-      &:last-child {
-        margin-bottom: 0;
-        .block-text-wrapper {
-          padding-bottom: 0;
-          border-bottom: none;
-        }
-      }
-      .block-text-wrapper {
-        position: relative;
-        padding-bottom: 24px;
-        border-bottom: 1px solid #ebedf0;
-        h4 {
-          position: relative;
-          display: inline-block;
-          margin-bottom: 8px;
-          font-size: 20px;
-          line-height: 28px;
-          white-space: nowrap;
-          .new {
-            position: absolute;
-            top: 50%;
-            right: 0;
-            display: inline-block;
-            padding: 0 2px;
-            color: #fff;
-            font-size: 12px;
-            line-height: 16px;
-            background: #f5222d;
-            border-radius: 4px;
-            transform: translate('calc(100% + 4px)', -50%); // 手机回行处理
-          }
-        }
-        p {
-          margin-bottom: 16px;
-          line-height: 24px;
-        }
-        .more {
-          display: inline-block;
-          color: $home-bg-color;
-          line-height: 22px;
-          vertical-align: top;
-          i {
-            font-size: 12px;
-            vertical-align: middle;
-          }
-        }
-        .more-mobile-react,
-        .more-mobile-angular {
-          display: block;
-          margin-top: 8px;
-          color: $home-bg-color;
-        }
-      }
-      .block-image-wrapper {
-        display: flex;
-        align-items: center;
-        height: 104px;
-        img {
-          display: block;
-          max-width: 80%;
-        }
-        &.right {
-          justify-content: flex-end;
-          float: right;
-        }
-      }
-    }
+// .page2 {
+//   min-height: 1110px;
+//   padding-top: 1px;
+//   overflow: initial;
+//   background: #eff3f6;
+//   .page {
+//     position: relative;
+//     z-index: 1;
+//     h2 {
+//       margin-bottom: 112px;
+//     }
+//   }
+//   &-content {
+//     background: $home-bg-color;
+//     box-shadow: 0 12px 20px #d8e0e6;
+//   }
+//   &-components,
+//   &-product {
+//     min-height: 670px;
+//   }
+//   &-components {
+//     position: initial;
+//     padding: 56px;
+//     color: #fff;
+//     line-height: 32px;
+//     background: $home-bg-color;
+//     h3 {
+//       margin: 0 auto 32px;
+//       color: #fff;
+//       font-size: 28px;
+//     }
+//     .components-button-wrapper {
+//       position: absolute;
+//       bottom: 48px;
+//       left: 56px;
+//       a {
+//         display: block;
+//         margin-top: 16px;
+//         color: #fff;
+//         line-height: 1.5em;
+//       }
+//     }
+//   }
+//   &-product {
+//     padding: 48px 56px;
+//     background: #fff;
+//     .product-block {
+//       margin-bottom: 24px;
+//       color: $home-text-color;
+//       &:last-child {
+//         margin-bottom: 0;
+//         .block-text-wrapper {
+//           padding-bottom: 0;
+//           border-bottom: none;
+//         }
+//       }
+//       .block-text-wrapper {
+//         position: relative;
+//         padding-bottom: 24px;
+//         border-bottom: 1px solid #ebedf0;
+//         h4 {
+//           position: relative;
+//           display: inline-block;
+//           margin-bottom: 8px;
+//           font-size: 20px;
+//           line-height: 28px;
+//           white-space: nowrap;
+//           .new {
+//             position: absolute;
+//             top: 50%;
+//             right: 0;
+//             display: inline-block;
+//             padding: 0 2px;
+//             color: #fff;
+//             font-size: 12px;
+//             line-height: 16px;
+//             background: #f5222d;
+//             border-radius: 4px;
+//             transform: translate('calc(100% + 4px)', -50%); // 手机回行处理
+//           }
+//         }
+//         p {
+//           margin-bottom: 16px;
+//           line-height: 24px;
+//         }
+//         .more {
+//           display: inline-block;
+//           color: $home-bg-color;
+//           line-height: 22px;
+//           vertical-align: top;
+//           i {
+//             font-size: 12px;
+//             vertical-align: middle;
+//           }
+//         }
+//         .more-mobile-react,
+//         .more-mobile-angular {
+//           display: block;
+//           margin-top: 8px;
+//           color: $home-bg-color;
+//         }
+//       }
+//       .block-image-wrapper {
+//         display: flex;
+//         align-items: center;
+//         height: 104px;
+//         img {
+//           display: block;
+//           max-width: 80%;
+//         }
+//         &.right {
+//           justify-content: flex-end;
+//           float: right;
+//         }
+//       }
+//     }
 
-    a.product-block:hover {
-      h4 {
-        color: $home-bg-color;
-      }
-    }
-  }
-}
+//     a.product-block:hover {
+//       h4 {
+//         color: $home-bg-color;
+//       }
+//     }
+//   }
+// }
 
-.parallax-bg {
+.parallaxBg {
   position: absolute;
   top: 0;
   left: 0;
@@ -384,9 +384,9 @@ svg {
 
 /** page3 **/
 
-.page3 {
+.page2 {
   min-height: 556px;
-  &-block {
+  &Block {
     padding: 24px 12px;
     a {
       display: flex;
@@ -399,11 +399,11 @@ svg {
       }
     }
   }
-  &-img-wrapper,
-  &-text-wrapper {
+  &ImgWrapper,
+  &TextWrapper {
     display: inline-block;
   }
-  &-text-wrapper {
+  &TextWrapper {
     margin-top: 2px;
     // max-width: 182px;
     margin-left: 32px;
@@ -414,7 +414,7 @@ svg {
       line-height: 28px;
     }
   }
-  .parallax-bg.top {
+  .parallaxBg .top {
     margin: 0;
   }
 }
@@ -469,3 +469,4 @@ svg {
     }
   }
 }
+

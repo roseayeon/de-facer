@@ -5,7 +5,7 @@ import Page1 from './Page1';
 import Page2 from './Page2';
 import Page3 from './Page3';
 import Footer from './Footer';
-
+import 'antd/dist/antd.css';
 import './styles/common.scss';
 
 function getStyle() {
@@ -69,8 +69,7 @@ class Home extends React.Component {
           <title>{`De-facer`}</title>
         <Banner {...childProps} />
         <Page1 {...childProps} />
-        {/* <Page3 {...childProps} />
-        <Page2 {...childProps} /> */}
+        <Page2 {...childProps} />
         <Footer />
       </>
     );

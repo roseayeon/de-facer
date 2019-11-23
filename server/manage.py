@@ -31,13 +31,13 @@ def get_target_images():
 @cross_origin()
 def process():
     video = request.files["video"]
-    target = request.files["target"]
+    target = request.form["target"]
 
     input_path = ""
     targets_path = [""]
     replace_path = "" # to blur, should be empty
     output_path = ""
-    face.process_video(input_path, targets_path, replace_path, output_path)
+    #face.process_video(input_path, targets_path, replace_path, output_path)
     return Response(stream_with_context(video.stream), mimetype=video.mimetype)
 
 if __name__ == "__main__":

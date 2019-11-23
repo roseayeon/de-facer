@@ -3,6 +3,7 @@ import { TweenOneGroup } from 'rc-tween-one';
 import QueueAnim from 'rc-queue-anim';
 import { Row, Col } from 'antd';
 import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
+import 'antd/dist/antd.css';
 import './styles/common.scss';
 
 const page1Data = [
@@ -289,7 +290,7 @@ export default class Page1 extends React.PureComponent {
       );
     });
     return (
-      <div className="homePageWrapper page1">
+      <div className="homePageWrapper page1" id="page1">
         <div className="page">
           <h2> How to Start </h2>
           <ScrollOverPack playScale="0.3">

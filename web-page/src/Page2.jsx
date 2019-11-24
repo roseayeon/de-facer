@@ -1,8 +1,9 @@
 import React from 'react';
-import { Upload, Button, Icon, message, Divider, Radio, Steps } from 'antd';
+import { Upload, Button, Icon, message, Radio, Steps } from 'antd';
 import ScrollParallax from 'rc-scroll-anim/lib/ScrollParallax';
 import 'antd/dist/antd.css';
 
+import * as service from './services/post';
 import './styles/common.scss';
 
 function ParallaxG(props) {
@@ -75,17 +76,42 @@ class Page2 extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            fileList: [
-                {
-                    uid: '-1',
-                     name: 'xxx.png',
-                     status: 'done',
-                     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-                     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-                },
-            ],
+            fileList: [],
             current: 0,
         }
+    }
+
+    componentDidMount() {
+        this.fetchTargets();
+    }
+
+    fetchTargets = async () => {
+        this.setState({
+            fetching: true // requesting..
+        });
+
+        const info = await Promise.all([
+            service.getTargets(),
+        ]);
+
+        const fileList = []
+        const myRe = /targets\/.*/g;
+        for (let i=0; i<info[0].data.images.length; i++) {
+            const imgUrl = info[0].data.images[i]
+            var name = imgUrl.match(myRe);
+            fileList.push({
+                uid: i,
+                name: name,
+                status: 'done',
+                url: imgUrl,
+                thumUrl: imgUrl
+            });
+        }
+        info[0].data.images.forEach(element => console.log(element));
+        this.setState({
+            fileList,
+            fetching: false // done!
+        });
     }
 
     next() {
@@ -99,13 +125,14 @@ class Page2 extends React.Component {
     }
 
     render() {
-        const { current } = this.state;
+        const { current, fileList } = this.state;
 
         const targetProps = {
             name: 'file',
             action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             listType: 'picture',
-            defaultFileList: this.state.fileList,
+            accept: 'image/*',
+            fileList: fileList,
             onChange(info) {
                 if (info.file.status !== 'uploading') {
                 console.log(info.file, info.fileList);
@@ -117,15 +144,11 @@ class Page2 extends React.Component {
                 }
             },
             beforeUpload(file) {
-                const isImg = file.type === 'image/*';
-                if (!isImg) {
-                message.error('You can only upload Image File!');
-                }
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
                 message.error('Image must be maller than 10MB!');
                 }
-                return isImg && isLt10M;
+                return isLt10M;
             },
         };
         
@@ -133,6 +156,7 @@ class Page2 extends React.Component {
             name: 'file',
             multiple: false,
             action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+            accept: 'video/*',
             onChange(info) {
                 const { status } = info.file;
                 if (status !== 'uploading') {
@@ -145,15 +169,15 @@ class Page2 extends React.Component {
                 }
             },
             beforeUpload(file) {
-                const isVideo = file.type === 'video/*';
-                if (!isVideo) {
-                message.error('You can only upload Video File!');
-                }
+                // const isVideo = file.type === 'video/*';
+                // if (!isVideo) {
+                // message.error('You can only upload Video File!');
+                // }
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
                 message.error('Video must be smaller than 10MB!');
                 }
-                return isVideo && isLt10M;
+                return isLt10M;
             },
         };
 
@@ -166,7 +190,7 @@ class Page2 extends React.Component {
                     <div>
                         <Upload {...targetProps}>
                             <Button>
-                            <Icon type="upload" /> Click to Upload
+                                <Icon type="upload" /> Click to Upload
                             </Button>
                         </Upload>
                     </div>,

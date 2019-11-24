@@ -470,3 +470,19 @@ svg {
   }
 }
 
+.radioWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.steps-content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: 150px;
+}
+
+.steps-action {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px;
+}

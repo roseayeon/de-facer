@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Banner from './Banner';
 import Page1 from './Page1';
 import Page2 from './Page2';
-import Page3 from './Page3';
+// import Page3 from './Page3';
 import Footer from './Footer';
 import 'antd/dist/antd.css';
 import './styles/common.scss';

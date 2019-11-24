@@ -1,8 +1,8 @@
 import React from 'react';
-import { Upload, Button, Icon, message } from 'antd';
+import { Upload, Button, Icon, message, Divider, Radio, Steps } from 'antd';
 import ScrollParallax from 'rc-scroll-anim/lib/ScrollParallax';
-// import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 import 'antd/dist/antd.css';
+
 import './styles/common.scss';
 
 function ParallaxG(props) {
@@ -69,84 +69,180 @@ const svgBg = [
   />,
 ];
 const svgChildren = svgBgToParallax(svgBg);
-
-/* file upload */
-const fileList = [
-    {
-      uid: '-1',
-      name: 'xxx.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-];
+const { Dragger } = Upload;
 
 class Page2 extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            fileList: [
+                {
+                    uid: '-1',
+                     name: 'xxx.png',
+                     status: 'done',
+                     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+                     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+                },
+            ],
+            current: 0,
+        }
+    }
 
-  componentDidMount() {
-    // axios.get('http://34.82.172.56/targets')
-    // .then(function (response) {
-    //   console.log(response);
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    // });
-  }
+    next() {
+        const current = this.state.current + 1;
+        this.setState({ current });
+    }
+    
+    prev() {
+        const current = this.state.current - 1;
+        this.setState({ current });
+    }
 
-  render() {
+    render() {
+        const { current } = this.state;
 
-    const props = {
-        name: 'file',
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        listType: 'picture',
-        defaultFileList: [...fileList],
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-            }
-        },
-        // beforeUpload(file) {
-        //     const isVideoOrImg = file.type === 'video/*' || file.type === 'image/*';
-        //     if (!isVideoOrImg) {
-        //       message.error('You can only upload Video or Image File!');
-        //     }
-        //     const isLt10M = file.size / 1024 / 1024 < 10;
-        //     if (!isLt10M) {
-        //       message.error('Image must smaller than 10MB!');
-        //     }
-        //     return isVideoOrImg && isLt10M;
-        // },
-    };
+        const targetProps = {
+            name: 'file',
+            action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+            listType: 'picture',
+            defaultFileList: this.state.fileList,
+            onChange(info) {
+                if (info.file.status !== 'uploading') {
+                console.log(info.file, info.fileList);
+                }
+                if (info.file.status === 'done') {
+                message.success(`${info.file.name} file uploaded successfully`);
+                } else if (info.file.status === 'error') {
+                message.error(`${info.file.name} file upload failed.`);
+                }
+            },
+            beforeUpload(file) {
+                const isImg = file.type === 'image/*';
+                if (!isImg) {
+                message.error('You can only upload Image File!');
+                }
+                const isLt10M = file.size / 1024 / 1024 < 10;
+                if (!isLt10M) {
+                message.error('Image must be maller than 10MB!');
+                }
+                return isImg && isLt10M;
+            },
+        };
+        
+        const videoProps = {
+            name: 'file',
+            multiple: false,
+            action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+            onChange(info) {
+                const { status } = info.file;
+                if (status !== 'uploading') {
+                console.log(info.file, info.fileList);
+                }
+                if (status === 'done') {
+                message.success(`${info.file.name} file uploaded successfully.`);
+                } else if (status === 'error') {
+                message.error(`${info.file.name} file upload failed.`);
+                }
+            },
+            beforeUpload(file) {
+                const isVideo = file.type === 'video/*';
+                if (!isVideo) {
+                message.error('You can only upload Video File!');
+                }
+                const isLt10M = file.size / 1024 / 1024 < 10;
+                if (!isLt10M) {
+                message.error('Video must be smaller than 10MB!');
+                }
+                return isVideo && isLt10M;
+            },
+        };
 
-    return (
-      <div className="homePageWrapper page2" id="page2">
-        <div className="parallaxBg top">
-          <svg
-            width="1440px"
-            height="557px"
-            viewBox="0 0 1440 557"
-            stroke="none"
-            strokeWidth="1"
-            fill="none"
-            fillRule="evenodd"
-          >
-            {svgChildren}
-          </svg>
+        const { Step } = Steps;
+        const steps = [
+            {
+                title: 'Step 1',
+                description: 'Set Your Target Image',
+                content: 
+                    <div>
+                        <Upload {...targetProps}>
+                            <Button>
+                            <Icon type="upload" /> Click to Upload
+                            </Button>
+                        </Upload>
+                    </div>,
+            },
+            {
+                title: 'Step 2',
+                description: 'Upload Your Video',
+                content:
+                    <div>
+                        <Dragger {...videoProps}>
+                            <p className="ant-upload-drag-icon"><Icon type="inbox" /></p>
+                            <p className="ant-upload-text">Click or drag Video to this area to upload</p>
+                            <p className="ant-upload-hint">
+                            Video must be smaller than 10MB
+                            </p>
+                        </Dragger>
+                    </div>,
+            },
+            {
+                title: 'Step 3',
+                description: 'Choose Your Replacement Type',
+                content: 
+                    <div className="radioWrapper">
+                        <Radio.Group defaultValue="blur" buttonStyle="solid" size="large">
+                            <Radio.Button value="blur"> Blur </Radio.Button>
+                            <Radio.Button value="emoji"> Emoji 😎</Radio.Button>
+                            <Radio.Button value="image"> Transparent Image </Radio.Button>
+                    </Radio.Group>  
+                    </div>,
+            },
+        ];
+
+        return (
+        <div className="homePageWrapper page2" id="page2">
+            <div className="parallaxBg top">
+            <svg
+                width="1440px"
+                height="557px"
+                viewBox="0 0 1440 557"
+                stroke="none"
+                strokeWidth="1"
+                fill="none"
+                fillRule="evenodd"
+            >
+                {svgChildren}
+            </svg>
+            </div>
+            <div className="page">
+            <h2> Try with Your Own Image & Video! </h2>
+            <div>
+                <Steps current={current}>
+                {steps.map(item => (
+                    <Step key={item.title} title={item.title} />
+                ))}
+                </Steps>
+                <div className="steps-content">{steps[current].content}</div>
+                <div className="steps-action">
+                {current > 0 && (
+                    <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
+                    Previous
+                    </Button>
+                )}
+                {current < steps.length - 1 && (
+                    <Button type="primary" onClick={() => this.next()}>
+                    Next
+                    </Button>
+                )}
+                {current === steps.length - 1 && (
+                    <Button type="primary" onClick={() => message.success('Processing complete!')}>
+                    Done
+                    </Button>
+                )}
+                </div>
+            </div>
         </div>
-        <div className="page">
-          <h2> Try with Your Own Image & Video! </h2>
-            <Upload {...props}>
-                <Button>
-                <Icon type="upload" /> Click to Upload
-                </Button>
-            </Upload>,
-        </div>
-      </div>
+    </div>
     );
   }
 }

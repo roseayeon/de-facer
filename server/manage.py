@@ -13,19 +13,29 @@ cors = CORS(app)
 def hello_world():
     return 'Hello World'
 
-@app.route("/targets", methods=["GET"])
+@app.route("/targets", methods=["GET", "POST"])
 @cross_origin()
 def get_target_images():
-    # TODO: Filter the images with mimetype
     client = storage.Client()
     bucket = client.get_bucket(BUCKET_NAME)
+    if request.method == 'GET':
+        # TODO: Filter the images with mimetype
 
-    images = []
-    blobs = bucket.list_blobs(prefix="targets/", delimiter="/")
-    for blob in blobs:
-        images.append(str.format(STORAGE_URL_FORMAT, BUCKET_NAME, blob.name))
-    
-    return jsonify({"images": images})
+        images = []
+        blobs = bucket.list_blobs(prefix="targets/", delimiter="/")
+        for blob in blobs:
+            images.append(str.format(STORAGE_URL_FORMAT, BUCKET_NAME, blob.name))
+
+        return jsonify({"images": images})
+    else:
+        # Upload
+        image = request.files["image"]
+        path = "targets/" + image.filename
+        blob = bucket.blob(path)
+        blob.upload_from_string(image.read(), content_type=image.content_type)
+        return Response()
+
+
 
 @app.route("/process", methods=["POST"])
 @cross_origin()

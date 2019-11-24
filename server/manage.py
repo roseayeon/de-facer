@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, Response, stream_with_context
+from flask_cors import CORS, cross_origin
 from google.cloud import storage
 import face
 
@@ -6,12 +7,14 @@ BUCKET_NAME = "kaist-cs470-project"
 STORAGE_URL_FORMAT = "https://storage.googleapis.com/{}/{}"
 
 app = Flask(__name__)
+cors = CORS(app)
 
 @app.route('/')
 def hello_world():
     return 'Hello World'
 
 @app.route("/targets", methods=["GET"])
+@cross_origin()
 def get_target_images():
     # TODO: Filter the images with mimetype
     client = storage.Client()
@@ -25,15 +28,16 @@ def get_target_images():
     return jsonify({"images": images})
 
 @app.route("/process", methods=["POST"])
+@cross_origin()
 def process():
     video = request.files["video"]
-    target = request.files["target"]
+    target = request.form["target"]
 
     input_path = ""
     targets_path = [""]
     replace_path = "" # to blur, should be empty
     output_path = ""
-    face.process_video(input_path, targets_path, replace_path, output_path)
+    #face.process_video(input_path, targets_path, replace_path, output_path)
     return Response(stream_with_context(video.stream), mimetype=video.mimetype)
 
 if __name__ == "__main__":

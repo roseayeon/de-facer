@@ -37,6 +37,13 @@ def process_video(video_path, targets_path, replace_path, output_path):
   targets_aligned = mtcnn(targets_img)
   targets_aligned = [target[0] for target in targets_aligned]
   targets_encoding = resnet(torch.stack(targets_aligned).to(device)).detach().cpu()
+
+  # replace image
+  if replace_path != "":
+    replace_img = cv2.imread(replace_path, cv2.IMREAD_UNCHANGED)
+    replace_alpha = replace_img[:,:,3] / 255.0
+    replace_alpha = cv2.merge((replace_alpha, replace_alpha, replace_alpha))
+    replace_img = cv2.cvtColor(replace_img, cv2.COLOR_BGRA2RGB)
   
   frames_tracked = []
   while cap:
@@ -88,15 +95,23 @@ def process_video(video_path, targets_path, replace_path, output_path):
             break
 
         if not target_detected:
-          # Blur face
-          face = frame[box[1]:box[3], box[0]:box[2]]
           w = box[2]-box[0]
           h = box[3]-box[1]
-          # select blur method
-          #blurred_face = cv2.GaussianBlur(face, (19,19), 0)
-          blurred_face = cv2.resize(face, (0,0), fx=REDUCE_RATE, fy=REDUCE_RATE)
-          blurred_face = cv2.resize(blurred_face, (w,h), interpolation=cv2.INTER_LINEAR)
-          frame[box[1]:box[3], box[0]:box[2]] = blurred_face
+          if replace_path == "":
+            # Blur face
+            face = frame[box[1]:box[3], box[0]:box[2]]
+            # select blur method
+            #blurred_face = cv2.GaussianBlur(face, (19,19), 0)
+            blurred_face = cv2.resize(face, (0,0), fx=REDUCE_RATE, fy=REDUCE_RATE)
+            blurred_face = cv2.resize(blurred_face, (w,h), interpolation=cv2.INTER_LINEAR)
+            frame[box[1]:box[3], box[0]:box[2]] = blurred_face
+          else:
+            pass
+            # Replacement
+            face = frame[box[1]:box[3], box[0]:box[2]]
+            cover_face = cv2.resize(replace_img, (w, h))
+            alpha = cv2.resize(replace_alpha, (w, h))
+            frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
       
       # Add to frame list
       frames_tracked.append(frame)
@@ -119,5 +134,5 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('video.mp4', ['target.jpg'], '', 'output.avi')
+    process_video('video.mp4', ['target.jpg'], 'replace.png', 'output.avi')
 

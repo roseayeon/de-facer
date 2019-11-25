@@ -195,5 +195,5 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('video.mp4', ['target.jpg'], '', 'output.avi')
+    process_video('../media/video.mp4', ['../media/target.jpg'], '', 'output.avi')
 

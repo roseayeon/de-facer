@@ -5,6 +5,7 @@ from facenet_pytorch import MTCNN, InceptionResnetV1
 import torch
 import numpy as np
 from PIL import Image, ImageDraw
+import time
 
 def prewhiten(x):
   mean = x.mean()
@@ -17,11 +18,16 @@ MAX_FRAME = 1500 # for testing
 FACE_SIZE = 160
 REDUCE_RATE = 0.03
 DIFF_THRESHOLD = 0.9
+MAX_FACES_LEN = 200
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 mtcnn = MTCNN(keep_all=True, min_face_size=20, device=device)
 resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 
+def get_ms():
+  return int(time.time()*1000.0)
+
 def process_video(video_path, targets_path, replace_path, output_path):
+  start_time = get_ms()
   cap = cv2.VideoCapture(video_path)
   video_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
   video_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -45,6 +51,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
     replace_alpha = cv2.merge((replace_alpha, replace_alpha, replace_alpha))
     replace_img = cv2.cvtColor(replace_img, cv2.COLOR_BGRA2RGB)
   
+  print ("capture start", get_ms()-start_time) 
   frames_tracked = []
   batches = []
   while True:
@@ -71,11 +78,13 @@ def process_video(video_path, targets_path, replace_path, output_path):
   # detect faces
   boxes, _ = mtcnn.detect(batches)
   cap.release()
+  print ("mtcnn end", get_ms()-start_time) 
 
-  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), origin_fps/2, (video_w,video_h))
+  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), origin_fps, (video_w,video_h))
+  faces = []
+  start_idx = 0
   for (i, frame) in enumerate(frames_tracked):
-    # protect face
-    faces = []
+    # crop recognized face 
     for box in boxes[i]:
       box = [
         int(max(box[0]*4, 0)),
@@ -88,43 +97,100 @@ def process_video(video_path, targets_path, replace_path, output_path):
       face = prewhiten(F.to_tensor(face).to(device))
       faces.append(face)
 
+    if len(faces) < MAX_FACES_LEN:
+      continue
+
     encodings = resnet(torch.stack(faces)).detach().cpu()
-    for encoding, box in zip(encodings, boxes[i]):
-      box = [
-        int(max(box[0]*4, 0)),
-        int(max(box[1]*4, 0)),
-        int(min(box[2]*4, video_w)),
-        int(min(box[3]*4, video_h)),
-      ]
+    print ("resnet end", get_ms() - start_time)
+    idx = 0
+    for j in range(start_idx, i+1):
+      frame = frames_tracked[j]
+      for box in boxes[j]:
+        encoding = encodings[idx]
+        idx += 1
 
-      target_detected = False
-      for target_encoding in targets_encoding: 
-        face_diff = (encoding - target_encoding).norm().item()
-        #print (count, face_diff)
-        if face_diff <= DIFF_THRESHOLD:
-          target_detected = True
-          break
+        box = [
+          int(max(box[0]*4, 0)),
+          int(max(box[1]*4, 0)),
+          int(min(box[2]*4, video_w)),
+          int(min(box[3]*4, video_h)),
+        ]
 
-      if not target_detected:
-        w = box[2]-box[0]
-        h = box[3]-box[1]
-        if replace_path == "":
-          # Blur face
-          face = frame[box[1]:box[3], box[0]:box[2]]
-          # select blur method
-          #blurred_face = cv2.GaussianBlur(face, (19,19), 0)
-          blurred_face = cv2.resize(face, (0,0), fx=REDUCE_RATE, fy=REDUCE_RATE)
-          blurred_face = cv2.resize(blurred_face, (w,h), interpolation=cv2.INTER_LINEAR)
-          frame[box[1]:box[3], box[0]:box[2]] = blurred_face
-        else:
-          # Replacement
-          face = frame[box[1]:box[3], box[0]:box[2]]
-          cover_face = cv2.resize(replace_img, (w, h))
-          alpha = cv2.resize(replace_alpha, (w, h))
-          frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
-    writer.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+        target_detected = False
+        for target_encoding in targets_encoding: 
+          face_diff = (encoding - target_encoding).norm().item()
+          if face_diff <= DIFF_THRESHOLD:
+            target_detected = True
+            break
+
+        if not target_detected:
+          w = box[2]-box[0]
+          h = box[3]-box[1]
+          if replace_path == "":
+            # Blur face
+            face = frame[box[1]:box[3], box[0]:box[2]]
+            # select blur method
+            #blurred_face = cv2.GaussianBlur(face, (19,19), 0)
+            blurred_face = cv2.resize(face, (0,0), fx=REDUCE_RATE, fy=REDUCE_RATE)
+            blurred_face = cv2.resize(blurred_face, (w,h), interpolation=cv2.INTER_LINEAR)
+            frame[box[1]:box[3], box[0]:box[2]] = blurred_face
+          else:
+            # Replacement
+            face = frame[box[1]:box[3], box[0]:box[2]]
+            cover_face = cv2.resize(replace_img, (w, h))
+            alpha = cv2.resize(replace_alpha, (w, h))
+            frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
+      writer.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+    
+    faces = []
+    start_idx = i+1
+
+  if len(faces) != "":
+    encodings = resnet(torch.stack(faces)).detach().cpu()
+    print ("resnet end", get_ms() - start_time)
+    idx = 0
+    for j in range(start_idx, len(frames_tracked)):
+      frame = frames_tracked[j]
+      for box in boxes[j]:
+        encoding = encodings[idx]
+        idx += 1
+
+        box = [
+          int(max(box[0]*4, 0)),
+          int(max(box[1]*4, 0)),
+          int(min(box[2]*4, video_w)),
+          int(min(box[3]*4, video_h)),
+        ]
+
+        target_detected = False
+        for target_encoding in targets_encoding: 
+          face_diff = (encoding - target_encoding).norm().item()
+          if face_diff <= DIFF_THRESHOLD:
+            target_detected = True
+            break
+
+        if not target_detected:
+          w = box[2]-box[0]
+          h = box[3]-box[1]
+          if replace_path == "":
+            # Blur face
+            face = frame[box[1]:box[3], box[0]:box[2]]
+            # select blur method
+            #blurred_face = cv2.GaussianBlur(face, (19,19), 0)
+            blurred_face = cv2.resize(face, (0,0), fx=REDUCE_RATE, fy=REDUCE_RATE)
+            blurred_face = cv2.resize(blurred_face, (w,h), interpolation=cv2.INTER_LINEAR)
+            frame[box[1]:box[3], box[0]:box[2]] = blurred_face
+          else:
+            # Replacement
+            face = frame[box[1]:box[3], box[0]:box[2]]
+            cover_face = cv2.resize(replace_img, (w, h))
+            alpha = cv2.resize(replace_alpha, (w, h))
+            frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
+      writer.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+
 
   writer.release()
+  print("finish", get_ms()-start_time)
 
   cv2.destroyAllWindows()
 

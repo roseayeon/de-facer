@@ -15,7 +15,7 @@ def prewhiten(x):
 
 MAX_FRAME = 240 # for testing
 FACE_SIZE = 160
-REDUCE_RATE = 0.1
+REDUCE_RATE = 0.03
 DIFF_THRESHOLD = 0.9
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 mtcnn = MTCNN(keep_all=True, min_face_size=20, device=device)
@@ -106,7 +106,6 @@ def process_video(video_path, targets_path, replace_path, output_path):
             blurred_face = cv2.resize(blurred_face, (w,h), interpolation=cv2.INTER_LINEAR)
             frame[box[1]:box[3], box[0]:box[2]] = blurred_face
           else:
-            pass
             # Replacement
             face = frame[box[1]:box[3], box[0]:box[2]]
             cover_face = cv2.resize(replace_img, (w, h))
@@ -134,5 +133,5 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('video.mp4', ['target.jpg'], 'replace.png', 'output.avi')
+    process_video('video.mp4', ['target.jpg'], '', 'output.avi')
 

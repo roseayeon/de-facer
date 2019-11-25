@@ -75,9 +75,9 @@ def process_video(video_path, targets_path, replace_path, output_path):
     if count > MAX_FRAME:
       break
 
+  cap.release()
   # detect faces
   boxes, _ = mtcnn.detect(batches)
-  cap.release()
   print ("mtcnn end", get_ms()-start_time) 
 
   writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), origin_fps, (video_w,video_h))
@@ -85,6 +85,8 @@ def process_video(video_path, targets_path, replace_path, output_path):
   start_idx = 0
   for (i, frame) in enumerate(frames_tracked):
     # crop recognized face 
+    if boxes[i] is None:
+      boxes[i] = []
     for box in boxes[i]:
       box = [
         int(max(box[0]*4, 0)),

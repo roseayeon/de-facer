@@ -77,7 +77,10 @@ class Page2 extends React.Component {
         super(props)
         this.state = {
             fileList: [],
+            targetImgs: [],
             current: 0,
+            radioValue: 'blur',
+            videoFile: undefined,
         }
     }
 
@@ -98,7 +101,8 @@ class Page2 extends React.Component {
         const myRe = /targets\/.*/g;
         for (let i=0; i<info[0].data.images.length; i++) {
             const imgUrl = info[0].data.images[i]
-            var name = imgUrl.match(myRe);
+            var name = ''+imgUrl.match(myRe)+'';
+            name = name.substring(8);
             fileList.push({
                 uid: i,
                 name: name,
@@ -107,11 +111,28 @@ class Page2 extends React.Component {
                 thumUrl: imgUrl
             });
         }
-        info[0].data.images.forEach(element => console.log(element));
+        // info[0].data.images.forEach(element => console.log(element));
         this.setState({
             fileList,
+            // targetImgs: String(info[0].data.images[0]),
             fetching: false // done!
         });
+    }
+
+    postVideo  = async () => {
+        console.log(this.state.videoFile)
+        this.setState({
+            fetching: true // requesting..
+        });
+
+        const info = await Promise.all([
+            service.postProcess([this.state.targetImgs], this.state.videoFile)
+        ])
+
+        this.setState({
+            fetching: false // done!
+        });
+        message.success('Processing complete!')
     }
 
     next() {
@@ -124,29 +145,61 @@ class Page2 extends React.Component {
         this.setState({ current });
     }
 
+    onVideoChange = (file) => {
+        this.setState({ videoFile: file});
+    }
+
+    onRadioChange = (event) => {
+        if(event.target.value === "image"){
+            this.setState({radioValue: "image"})
+        }
+    }
+
+    onTargetImgChange = (file) => {
+        var index = this.state.targetImgs.indexOf(file.uid);
+        if (index > -1){
+            let newImgLst = this.state.targetImgs
+            newImgLst.splice(index, 1)
+            this.setState({
+                targetImgs: newImgLst
+            })
+        } else {
+            this.setState({
+                targetImgs: [
+                    ...this.state.targetImgs,
+                    file.uid
+                ]
+            })
+        }
+    }
+
     render() {
-        const { current, fileList } = this.state;
+        const { current, fileList, targetImgs } = this.state;
 
         const targetProps = {
             name: 'file',
-            action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+            action(file) {
+                return Promise.all([
+                    service.postTarget(file),
+                ])
+                .then(
+                    message.success(`${file.name} file uploaded successfully`)
+                )
+            },
             listType: 'picture',
             accept: 'image/*',
             fileList: fileList,
-            onChange(info) {
-                if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-                }
-                if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-                } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-                }
+            showUploadList: {
+                showRemoveIcon: false,
+                showPreviewIcon: true,
+                showDownloadIcon: false,
             },
+            onChange: this.fetchTargets,
+            onPreview: this.onTargetImgChange,
             beforeUpload(file) {
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
-                message.error('Image must be maller than 10MB!');
+                    message.error('Image must be maller than 10MB!');
                 }
                 return isLt10M;
             },
@@ -155,24 +208,16 @@ class Page2 extends React.Component {
         const videoProps = {
             name: 'file',
             multiple: false,
-            action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+            // action(file) {
+            //     // return Promise.all([
+            //     //     service.postProcess([targetImg], file),
+            //     // ])
+            // },
+            action: this.onVideoChange,
+            // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             accept: 'video/*',
-            onChange(info) {
-                const { status } = info.file;
-                if (status !== 'uploading') {
-                console.log(info.file, info.fileList);
-                }
-                if (status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully.`);
-                } else if (status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-                }
-            },
+            // onchange: this.onVideoChange,
             beforeUpload(file) {
-                // const isVideo = file.type === 'video/*';
-                // if (!isVideo) {
-                // message.error('You can only upload Video File!');
-                // }
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
                 message.error('Video must be smaller than 10MB!');
@@ -181,11 +226,47 @@ class Page2 extends React.Component {
             },
         };
 
+        const replaceProps = {
+            name: 'file',
+            action(file) {
+                return Promise.all([
+                    service.postTarget(file),
+                ]);
+            },
+            listType: 'picture',
+            accept: 'image/*',
+            fileList: fileList,
+            showUploadList: {
+                showRemoveIcon: false,
+                showPreviewIcon: true,
+                showDownloadIcon: false,
+            },
+            // onChange(info) {
+            //     console.log(info)
+            //     if (info.file.status !== 'uploading') {
+            //         console.log(info.file, info.fileList);
+            //     }
+            //     if (info.file.status === 'done') {
+            //         message.success(`${info.file.name} file uploaded successfully`);
+            //     } else if (info.file.status === 'error') {
+            //         message.error(`${info.file.name} file upload failed.`);
+            //     }
+            // },
+            onChange: this.fetchTargets,
+            beforeUpload(file) {
+                const isLt10M = file.size / 1024 / 1024 < 10;
+                if (!isLt10M) {
+                    message.error('Image must be maller than 10MB!');
+                }
+                return isLt10M;
+            },
+        }
+
         const { Step } = Steps;
         const steps = [
             {
-                title: 'Step 1',
-                description: 'Set Your Target Image',
+                title: 'Target Image',
+                description: "Select your target image",
                 content: 
                     <div>
                         <Upload {...targetProps}>
@@ -196,7 +277,32 @@ class Page2 extends React.Component {
                     </div>,
             },
             {
-                title: 'Step 2',
+                title: 'Replacement Type',
+                description: 'Choose Your Replacement Type',
+                content: 
+                    <div>
+                        <div className="radioWrapper">
+                        <Radio.Group defaultValue={this.state.radioValue} buttonStyle="solid" size="large" onChange={this.onRadioChange}>
+                            <Radio.Button value="blur"> Blur </Radio.Button>
+                            <Radio.Button value="image"> Transparent Image </Radio.Button>
+                        </Radio.Group> 
+                        </div>
+                        {
+                            this.state.radioValue === "image" &&
+                            <div>
+                                <Dragger {...targetProps}>
+                                    <p className="ant-upload-drag-icon"><Icon type="inbox" /></p>
+                                    <p className="ant-upload-text">Click or drag Image to this area to upload</p>
+                                    <p className="ant-upload-hint">
+                                    </p>
+                                </Dragger>
+                            </div>
+                        }
+                    </div>
+                    ,
+            },
+            {
+                title: 'Video',
                 description: 'Upload Your Video',
                 content:
                     <div>
@@ -208,18 +314,7 @@ class Page2 extends React.Component {
                             </p>
                         </Dragger>
                     </div>,
-            },
-            {
-                title: 'Step 3',
-                description: 'Choose Your Replacement Type',
-                content: 
-                    <div className="radioWrapper">
-                        <Radio.Group defaultValue="blur" buttonStyle="solid" size="large">
-                            <Radio.Button value="blur"> Blur </Radio.Button>
-                            <Radio.Button value="emoji"> Emoji 😎</Radio.Button>
-                            <Radio.Button value="image"> Transparent Image </Radio.Button>
-                    </Radio.Group>  
-                    </div>,
+                
             },
         ];
 
@@ -242,25 +337,30 @@ class Page2 extends React.Component {
             <h2> Try with Your Own Image & Video! </h2>
             <div>
                 <Steps current={current}>
-                {steps.map(item => (
-                    <Step key={item.title} title={item.title} />
-                ))}
+                    {
+                        steps.map(item => (
+                            <Step key={item.title} title={item.title} description={item.description} />
+                        ))
+                    }
                 </Steps>
                 <div className="steps-content">{steps[current].content}</div>
                 <div className="steps-action">
-                {current > 0 && (
+                {
+                    current > 0 && (
                     <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
                     Previous
                     </Button>
                 )}
-                {current < steps.length - 1 && (
+                {
+                    current < steps.length - 1 && (
                     <Button type="primary" onClick={() => this.next()}>
                     Next
                     </Button>
                 )}
-                {current === steps.length - 1 && (
-                    <Button type="primary" onClick={() => message.success('Processing complete!')}>
-                    Done
+                {
+                    current === steps.length - 1 && (
+                    <Button type="primary" onClick={this.postVideo}>
+                        Done
                     </Button>
                 )}
                 </div>

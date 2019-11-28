@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, Response, stream_with_context
+from flask import Flask, jsonify, request, Response, stream_with_context, send_from_directory
 from flask_cors import CORS, cross_origin
 from google.cloud import storage
 import face
@@ -9,9 +9,14 @@ STORAGE_URL_FORMAT = "https://storage.googleapis.com/{}/{}"
 app = Flask(__name__)
 cors = CORS(app)
 
+
 @app.route('/')
 def hello_world():
-    return 'Hello World'
+    return 'Team 13 AI Project'
+
+@app.route("/robots.txt")
+def robot():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 @app.route("/targets", methods=["GET", "POST"])
 @cross_origin()

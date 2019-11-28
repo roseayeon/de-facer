@@ -473,6 +473,11 @@ svg {
 .radioWrapper {
   display: flex;
   justify-content: center;
+
+  label {
+    min-width: 160px;
+    text-align: center;
+  }
 }
 
 .steps-content {
@@ -485,4 +490,8 @@ svg {
   display: flex;
   justify-content: flex-end;
   margin: 10px;
+}
+
+.ant-upload-list-item {
+  // border-color: #1890FF !important;
 }

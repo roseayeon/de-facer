@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, Response, stream_with_context, send_from_directory
 from flask_cors import CORS, cross_origin
 from google.cloud import storage
+import ast
 import face
 
 BUCKET_NAME = "kaist-cs470-project"
@@ -40,13 +41,11 @@ def get_target_images():
         blob.upload_from_string(image.read(), content_type=image.content_type)
         return Response()
 
-
-
 @app.route("/process", methods=["POST"])
 @cross_origin()
 def process():
     video = request.files["video"]
-    target = request.form["target"]
+    targets = ast.literal_eval(request.form["targets"])
 
     input_path = ""
     targets_path = [""]

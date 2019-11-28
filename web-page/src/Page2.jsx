@@ -114,7 +114,6 @@ class Page2 extends React.Component {
         // info[0].data.images.forEach(element => console.log(element));
         this.setState({
             fileList,
-            // targetImgs: String(info[0].data.images[0]),
             fetching: false // done!
         });
     }
@@ -126,7 +125,7 @@ class Page2 extends React.Component {
         });
 
         const info = await Promise.all([
-            service.postProcess([this.state.targetImgs], this.state.videoFile)
+            service.postProcess(this.state.targetImgs, this.state.videoFile)
         ])
 
         this.setState({
@@ -156,7 +155,7 @@ class Page2 extends React.Component {
     }
 
     onTargetImgChange = (file) => {
-        var index = this.state.targetImgs.indexOf(file.uid);
+        var index = this.state.targetImgs.indexOf(file.url);
         if (index > -1){
             let newImgLst = this.state.targetImgs
             newImgLst.splice(index, 1)
@@ -167,7 +166,7 @@ class Page2 extends React.Component {
             this.setState({
                 targetImgs: [
                     ...this.state.targetImgs,
-                    file.uid
+                    file.url
                 ]
             })
         }
@@ -210,7 +209,7 @@ class Page2 extends React.Component {
             multiple: false,
             // action(file) {
             //     // return Promise.all([
-            //     //     service.postProcess([targetImg], file),
+            //     //     service.postProcess(targetImgs, file),
             //     // ])
             // },
             action: this.onVideoChange,

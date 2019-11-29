@@ -1,0 +1,397 @@
+$home-bg-color: #8f99cf;
+$home-text-color: #314659;
+
+.homePageWrapper {
+  position: relative; // will-change: transform;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  color: $home-text-color;
+  font-family: Avenir, sans-serif;
+
+  .page {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 24px;
+    h2 {
+      margin: 140px auto 100px;
+      color: $home-text-color;
+      font-weight: 400;
+      font-size: 38px;
+      line-height: 46px;
+      text-align: center;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    p {
+      will-change: transform;
+    }
+
+    // .ant-row {
+    //   display: flex;
+    //   justify-content: space-around;
+    // }
+  }
+}
+
+.bannerBg {
+  &Wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  position: absolute;
+  bottom: -200px;
+  left: 0%;
+  width: 120%;
+  height: 200px;
+  background: $home-bg-color;
+  transform: rotate(-4deg);
+  transform-origin: 0;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  height: 576px;
+  &Wrapper {
+    position: relative;
+    z-index: 1;
+    overflow: initial;
+  }
+  .textWrapper {
+    width: 54%;
+    min-width: 420px;
+    max-width: 560px;
+    min-height: 400px;
+    color: $home-text-color;
+    > * {
+      will-change: transform;
+    }
+    h1 {
+      margin: 8px 0 28px;
+      font-weight: 600;
+      font-size: 68px;
+      font-family: Avenir, sans-serif;
+      line-height: 76px;
+      letter-spacing: 0;
+    }
+    p {
+      color: $home-text-color;
+      font-size: 20px;
+      line-height: 40px;
+    }
+  }
+
+  .imgWrapper {
+    position: absolute;
+    right: 0;
+    bottom: 26px;
+    width: 46%;
+    max-width: 482px;
+
+    img {
+      max-width: 100%;
+    }
+  }
+
+  .bannerBtns {
+    display: flex;
+    align-items: center;
+    min-width: 520px;
+    margin-top: 24px;
+
+    .bannerBtn {
+      display: inline-block;
+      height: 40px;
+      padding: 0 24px;
+      font-size: 16px;
+      font-family: Avenir, sans-serif;
+      line-height: 40px;
+      text-align: center;
+      text-decoration: none;
+      border: 1px solid $home-bg-color;
+      border-radius: 6px;
+    }
+
+    .bannerBtn.components {
+      color: #fff;
+      background: $home-bg-color;
+    }
+
+    .bannerBtn.language {
+      color: $home-bg-color;
+    }
+  }
+
+  .bannerPromote {
+    max-width: 100%;
+    margin: 48px 0 24px 0;
+
+    .antDividerInnerText {
+      padding: 0 12px;
+      color: rgba(0, 0, 0, 0.25);
+      font-weight: normal;
+      font-size: 12px;
+    }
+
+    a {
+      color: $home-text-color;
+      font-size: 16px;
+      transition: all 0.3s;
+
+      .anticon {
+        position: relative;
+        left: 0;
+        transition: all 0.3s;
+      }
+
+      &:hover {
+        color: $home-bg-color;
+
+        .anticon {
+          left: 4px;
+        }
+      }
+
+      img {
+        position: relative;
+        top: -1px;
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+svg {
+  display: block;
+  g {
+    transform-origin: 50%;
+    transform-box: fill-box;
+  }
+}
+
+/** page1 **/
+
+.page1 {
+  min-height: 784px;
+  background: $home-bg-color;
+  background: linear-gradient(to bottom, #8f99cf 0%, #6095F9 100%);
+  h2 {
+    color: #fff !important;
+  }
+  &Block {
+    position: relative;
+    z-index: 1;
+    display: block;
+    max-width: 160px;
+    margin: auto;
+    text-align: center;
+    h3 {
+      color: #fff;
+      font-weight: 400;
+      font-size: 20px;
+    }
+    p {
+      color: #fff;
+    }
+    &:hover .page1Image {
+      box-shadow: 0 6px 10px rgba(5, 26, 180, 0.35);
+      transform: translateY(-4px);
+    }
+  }
+  &Image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    margin: 46px auto 40px;
+    background: #fff;
+    border-radius: 100%;
+    transition: transform 0.45s ease-out, box-shadow 0.45s ease-out;
+    img {
+      display: block;
+    }
+  }
+  &PointWrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    overflow: inherit !important;
+  }
+}
+
+
+.parallaxBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  &.bottom {
+    z-index: 0;
+  }
+  &.top {
+    display: flex;
+    justify-content: center;
+    margin-top: 220px;
+    svg {
+      overflow: inherit;
+    }
+  }
+}
+
+/** page3 **/
+
+.page2 {
+  min-height: 556px;
+  &Block {
+    padding: 24px 12px;
+    a {
+      display: flex;
+      justify-content: center;
+      color: $home-text-color;
+    }
+    &:hover {
+      h3 {
+        color: $home-bg-color;
+      }
+    }
+  }
+  &ImgWrapper,
+  &TextWrapper {
+    display: inline-block;
+  }
+  &TextWrapper {
+    margin-top: 2px;
+    // max-width: 182px;
+    margin-left: 32px;
+    line-height: 24px;
+    h3 {
+      margin-bottom: 4px;
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+  .parallaxBg .top {
+    margin: 0;
+  }
+}
+
+/** video **/
+
+.new-version-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  background: #fbfbfb;
+  .vidoe-wrap {
+    width: 100%;
+    background: url('https://gw.alipayobjects.com/zos/rmsportal/gEeRuETmbpAYRaeilexm.jpg') repeat-x;
+    background-size: cover;
+    video {
+      display: block;
+    }
+  }
+}
+
+.banner-1024 {
+  display: block;
+  cursor: pointer;
+  transition: all 0.4s;
+
+  &:hover {
+    transform: translateY(-16px) scale(1.01);
+  }
+}
+
+.github-btn-large {
+  height: 40px;
+  font-family: Avenir, sans-serif;
+  line-height: 40px;
+
+  .gh-btn,
+  .gh-count {
+    height: 40px;
+    padding: 9px;
+    background: transparent;
+  }
+
+  .gh-count {
+    margin-left: 10px;
+
+    &::after {
+      border-width: 7px 6px 7px 0;
+    }
+  }
+}
+
+.radioWrapper {
+  display: flex;
+  justify-content: center;
+
+  label {
+    min-width: 160px;
+    text-align: center;
+  }
+}
+
+.steps-content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  min-height: 150px;
+  padding-left: 20px;
+}
+
+.steps-action {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px;
+}
+
+.uploadWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.resultWrapper {
+  .ant-result {
+    padding-bottom: 20px;
+  }
+}
+
+.ant-card-cover {
+  display: flex;
+  justify-content: center;
+  img {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.ant-col {
+  margin-bottom: 12px;
+}
+
+.ant-row {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}

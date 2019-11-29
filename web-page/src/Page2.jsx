@@ -81,6 +81,7 @@ class Page2 extends React.Component {
             current: 0,
             radioValue: 'blur',
             videoFile: undefined,
+            replaceImg: [],
         }
     }
 
@@ -119,13 +120,11 @@ class Page2 extends React.Component {
     }
 
     postVideo  = async () => {
-        console.log(this.state.videoFile)
         this.setState({
             fetching: true // requesting..
         });
-
         const info = await Promise.all([
-            service.postProcess(this.state.targetImgs, this.state.videoFile)
+            service.postProcess(this.state.targetImgs, this.state.videoFile, this.state.replaceImg)
         ])
 
         this.setState({
@@ -149,9 +148,7 @@ class Page2 extends React.Component {
     }
 
     onRadioChange = (event) => {
-        if(event.target.value === "image"){
-            this.setState({radioValue: "image"})
-        }
+        this.setState({radioValue: event.target.value})
     }
 
     onTargetImgChange = (file) => {
@@ -170,6 +167,13 @@ class Page2 extends React.Component {
                 ]
             })
         }
+    }
+
+    onReplaceImageChange = (file) => {
+        console.log(file)
+        this.setState({
+            replaceImg: [file.file],
+        })
     }
 
     render() {
@@ -207,11 +211,6 @@ class Page2 extends React.Component {
         const videoProps = {
             name: 'file',
             multiple: false,
-            // action(file) {
-            //     // return Promise.all([
-            //     //     service.postProcess(targetImgs, file),
-            //     // ])
-            // },
             action: this.onVideoChange,
             // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             accept: 'video/*',
@@ -227,37 +226,26 @@ class Page2 extends React.Component {
 
         const replaceProps = {
             name: 'file',
-            action(file) {
-                return Promise.all([
-                    service.postTarget(file),
-                ]);
-            },
+            action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             listType: 'picture',
-            accept: 'image/*',
-            fileList: fileList,
+            accept: 'image/png',
+            fileList: this.state.replaceImg,
             showUploadList: {
                 showRemoveIcon: false,
                 showPreviewIcon: true,
                 showDownloadIcon: false,
             },
-            // onChange(info) {
-            //     console.log(info)
-            //     if (info.file.status !== 'uploading') {
-            //         console.log(info.file, info.fileList);
-            //     }
-            //     if (info.file.status === 'done') {
-            //         message.success(`${info.file.name} file uploaded successfully`);
-            //     } else if (info.file.status === 'error') {
-            //         message.error(`${info.file.name} file upload failed.`);
-            //     }
-            // },
-            onChange: this.fetchTargets,
+            onChange: this.onReplaceImageChange,
             beforeUpload(file) {
+                const isPNG = file.type.match('image/png');
+                if(!isPNG) {
+                    message.error('Image should be PNG.');
+                }
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
                     message.error('Image must be maller than 10MB!');
                 }
-                return isLt10M;
+                return isLt10M && isPNG;
             },
         }
 
@@ -289,12 +277,11 @@ class Page2 extends React.Component {
                         {
                             this.state.radioValue === "image" &&
                             <div>
-                                <Dragger {...targetProps}>
-                                    <p className="ant-upload-drag-icon"><Icon type="inbox" /></p>
-                                    <p className="ant-upload-text">Click or drag Image to this area to upload</p>
-                                    <p className="ant-upload-hint">
-                                    </p>
-                                </Dragger>
+                                 <Upload {...replaceProps}>
+                                    <Button>
+                                        <Icon type="upload" /> Click to Upload
+                                    </Button>
+                                </Upload>
                             </div>
                         }
                     </div>
@@ -352,13 +339,13 @@ class Page2 extends React.Component {
                 )}
                 {
                     current < steps.length - 1 && (
-                    <Button type="primary" onClick={() => this.next()}>
+                    <Button type="primary" onClick={() => this.next()} disabled={this.state.targetImgs.length === 0}>
                     Next
                     </Button>
                 )}
                 {
                     current === steps.length - 1 && (
-                    <Button type="primary" onClick={this.postVideo}>
+                    <Button type="primary" onClick={this.postVideo} disabled={this.state.videoFile === undefined}>
                         Done
                     </Button>
                 )}

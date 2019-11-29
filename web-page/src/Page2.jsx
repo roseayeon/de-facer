@@ -147,7 +147,6 @@ class Page2 extends React.Component {
     }
 
     onVideoChange = (file) => {
-        console.log(file)
         this.setState({ videoFile: file});
     }
 
@@ -218,8 +217,7 @@ class Page2 extends React.Component {
             action: this.onVideoChange,
             // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             accept: 'video/*',
-            // onchange: this.onVideoChange,
-            // customRequest: this.onVideoChange,
+            showUploadList: false,
             beforeUpload(file) {
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
@@ -314,13 +312,27 @@ class Page2 extends React.Component {
                 description: 'Upload Your Video',
                 content:
                     <div>
-                            <Dragger {...videoProps}>
-                                <p className="ant-upload-drag-icon"><Icon type="inbox" /></p>
-                                <p className="ant-upload-text">Click or drag Video to this area to upload</p>
-                                <p className="ant-upload-hint">
-                                Video must be smaller than 10MB
-                                </p>
-                            </Dragger>
+                            {
+                                this.state.videoFile === undefined &&
+                                <Dragger {...videoProps}>
+                                    <p className="ant-upload-drag-icon"><Icon type="inbox" /></p>
+                                    <p className="ant-upload-text">Click or drag Video to this area to upload</p>
+                                    <p className="ant-upload-hint">
+                                    Video must be smaller than 10MB
+                                    </p>
+                                </Dragger>
+                            }
+                            {
+                                this.state.videoFile !== undefined &&
+                                <Result
+                                    status="success"
+                                    title="Video is Uploaded"
+                                    subTitle="Click Done button to deface your video"
+                                    extra={[
+                                    <Button key="buy" onClick={()=> this.setState({videoFile: undefined})}>Upload other video</Button>,
+                                    ]}
+                                />
+                            }
                     </div>,
                 
             },

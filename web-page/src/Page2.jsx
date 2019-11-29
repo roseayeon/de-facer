@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Button, Icon, message, Radio, Steps, Result, Spin } from 'antd';
+import { Upload, Button, Icon, message, Radio, Steps, Result, Spin, Card, Col, Row, Checkbox } from 'antd';
 import ScrollParallax from 'rc-scroll-anim/lib/ScrollParallax';
 import 'antd/dist/antd.css';
 
@@ -110,7 +110,7 @@ class Page2 extends React.Component {
                 name: name,
                 status: 'done',
                 url: imgUrl,
-                thumUrl: imgUrl
+                thumbUrl: imgUrl
             });
         }
         // info[0].data.images.forEach(element => console.log(element));
@@ -136,6 +136,15 @@ class Page2 extends React.Component {
         message.success('Processing complete!')
     }
 
+    clickPrev = () => {
+        if (this.state.replaceImg.length === 0) {
+            this.setState({
+                radioValue: 'blur'
+            })
+        }
+        this.prev()
+    }
+
     next() {
         const current = this.state.current + 1;
         this.setState({ current });
@@ -154,8 +163,10 @@ class Page2 extends React.Component {
         this.setState({radioValue: event.target.value})
     }
 
-    onTargetImgChange = (file) => {
-        var index = this.state.targetImgs.indexOf(file.url);
+    clickedImage = (e) => {
+        console.log(e.target.value)
+        var file = e.target.value;
+        var index = this.state.targetImgs.indexOf(file);
         if (index > -1){
             let newImgLst = this.state.targetImgs
             newImgLst.splice(index, 1)
@@ -166,7 +177,7 @@ class Page2 extends React.Component {
             this.setState({
                 targetImgs: [
                     ...this.state.targetImgs,
-                    file.url
+                    file
                 ]
             })
         }
@@ -195,13 +206,13 @@ class Page2 extends React.Component {
             listType: 'picture',
             accept: 'image/*',
             fileList: fileList,
-            showUploadList: {
-                showRemoveIcon: false,
-                showPreviewIcon: true,
-                showDownloadIcon: false,
-            },
+            // showUploadList: {
+            //     showRemoveIcon: false,
+            //     showPreviewIcon: true,
+            //     showDownloadIcon: false,
+            // },
+            showUploadList: false,
             onChange: this.fetchTargets,
-            onPreview: this.onTargetImgChange,
             beforeUpload(file) {
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
@@ -253,10 +264,11 @@ class Page2 extends React.Component {
         }
 
         const { Step } = Steps;
+        const { Meta } = Card; 
         const steps = [
             {
                 title: 'Target Image',
-                description: "Select your target image",
+                description: "Choose your target image",
                 content: 
                     <div>
                         <Upload {...targetProps}>
@@ -264,6 +276,21 @@ class Page2 extends React.Component {
                                 <Icon type="upload" /> Click to Upload
                             </Button>
                         </Upload>
+                        <Row gutter={16}>
+                            {
+                                fileList.map(item => (
+                                    <Col span={6}>
+                                        <Card
+                                            hoverable
+                                            style={{ width: 200 }}
+                                            cover={<img alt={item.name} src={item.thumbUrl} />}
+                                        >
+                                            <Meta title={<Checkbox value={item.url} onChange={this.clickedImage}>{ item.name } </Checkbox>} />
+                                        </Card>
+                                    </Col>
+                                ))
+                            }
+                        </Row>
                     </div>,
             },
             {
@@ -283,7 +310,7 @@ class Page2 extends React.Component {
                                 <div className="resultWrapper">
                                     <Result
                                         icon={<Icon type="file-image" theme="twoTone" />}
-                                        title="Upload a transparent image that you want to replace others' faces!"
+                                        title="Upload a transparent image (.png) that you want to replace others' faces!"
                                     />
                                 </div>
                                 <div className="uploadWrapper">
@@ -368,7 +395,7 @@ class Page2 extends React.Component {
                     <div className="steps-action">
                     {
                         current > 0 && (
-                        <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
+                        <Button style={{ marginRight: 8 }} onClick={this.clickPrev}>
                         Previous
                         </Button>
                     )}

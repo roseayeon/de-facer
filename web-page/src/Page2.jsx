@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Button, Icon, message, Radio, Steps } from 'antd';
+import { Upload, Button, Icon, message, Radio, Steps, Result, Spin } from 'antd';
 import ScrollParallax from 'rc-scroll-anim/lib/ScrollParallax';
 import 'antd/dist/antd.css';
 
@@ -82,6 +82,7 @@ class Page2 extends React.Component {
             radioValue: 'blur',
             videoFile: undefined,
             replaceImg: [],
+            showLoading: false,
         }
     }
 
@@ -121,14 +122,16 @@ class Page2 extends React.Component {
 
     postVideo  = async () => {
         this.setState({
-            fetching: true // requesting..
+            fetching: true, // requesting..
+            showLoading: true,
         });
         const info = await Promise.all([
             service.postProcess(this.state.targetImgs, this.state.videoFile, this.state.replaceImg)
         ])
 
         this.setState({
-            fetching: false // done!
+            fetching: false, // done!
+            showLoading: false,
         });
         message.success('Processing complete!')
     }
@@ -144,6 +147,7 @@ class Page2 extends React.Component {
     }
 
     onVideoChange = (file) => {
+        console.log(file)
         this.setState({ videoFile: file});
     }
 
@@ -177,7 +181,7 @@ class Page2 extends React.Component {
     }
 
     render() {
-        const { current, fileList, targetImgs } = this.state;
+        const { current, fileList } = this.state;
 
         const targetProps = {
             name: 'file',
@@ -215,6 +219,7 @@ class Page2 extends React.Component {
             // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             accept: 'video/*',
             // onchange: this.onVideoChange,
+            // customRequest: this.onVideoChange,
             beforeUpload(file) {
                 const isLt10M = file.size / 1024 / 1024 < 10;
                 if (!isLt10M) {
@@ -271,17 +276,34 @@ class Page2 extends React.Component {
                         <div className="radioWrapper">
                         <Radio.Group defaultValue={this.state.radioValue} buttonStyle="solid" size="large" onChange={this.onRadioChange}>
                             <Radio.Button value="blur"> Blur </Radio.Button>
-                            <Radio.Button value="image"> Transparent Image </Radio.Button>
+                            <Radio.Button value="image"> Image </Radio.Button>
                         </Radio.Group> 
                         </div>
                         {
                             this.state.radioValue === "image" &&
                             <div>
-                                 <Upload {...replaceProps}>
-                                    <Button>
-                                        <Icon type="upload" /> Click to Upload
-                                    </Button>
-                                </Upload>
+                                <div>
+                                <Result
+                                    icon={<Icon type="file-image" theme="twoTone" />}
+                                    title="Upload a transparent image that you want to replace others' faces!"
+                                />
+                                </div>
+                                <div className="uploadWrapper">
+                                    <Upload {...replaceProps}>
+                                        <Button>
+                                            <Icon type="upload" /> Click to Upload
+                                        </Button>
+                                    </Upload>
+                                </div>
+                            </div>
+                        }
+                        {
+                            this.state.radioValue === "blur" &&
+                            <div>
+                                <Result
+                                    icon={<Icon type="smile" theme="twoTone"  />}
+                                    title="If you want to blur others' faces, keep going!"
+                                />
                             </div>
                         }
                     </div>
@@ -292,13 +314,13 @@ class Page2 extends React.Component {
                 description: 'Upload Your Video',
                 content:
                     <div>
-                        <Dragger {...videoProps}>
-                            <p className="ant-upload-drag-icon"><Icon type="inbox" /></p>
-                            <p className="ant-upload-text">Click or drag Video to this area to upload</p>
-                            <p className="ant-upload-hint">
-                            Video must be smaller than 10MB
-                            </p>
-                        </Dragger>
+                            <Dragger {...videoProps}>
+                                <p className="ant-upload-drag-icon"><Icon type="inbox" /></p>
+                                <p className="ant-upload-text">Click or drag Video to this area to upload</p>
+                                <p className="ant-upload-hint">
+                                Video must be smaller than 10MB
+                                </p>
+                            </Dragger>
                     </div>,
                 
             },
@@ -321,36 +343,38 @@ class Page2 extends React.Component {
             </div>
             <div className="page">
             <h2> Try with Your Own Image & Video! </h2>
-            <div>
-                <Steps current={current}>
+            <Spin spinning={this.state.showLoading} tip="Loading...">
+                <div>
+                    <Steps current={current}>
+                        {
+                            steps.map(item => (
+                                <Step key={item.title} title={item.title} description={item.description} />
+                            ))
+                        }
+                    </Steps>
+                    <div className="steps-content">{steps[current].content}</div>
+                    <div className="steps-action">
                     {
-                        steps.map(item => (
-                            <Step key={item.title} title={item.title} description={item.description} />
-                        ))
-                    }
-                </Steps>
-                <div className="steps-content">{steps[current].content}</div>
-                <div className="steps-action">
-                {
-                    current > 0 && (
-                    <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
-                    Previous
-                    </Button>
-                )}
-                {
-                    current < steps.length - 1 && (
-                    <Button type="primary" onClick={() => this.next()} disabled={this.state.targetImgs.length === 0}>
-                    Next
-                    </Button>
-                )}
-                {
-                    current === steps.length - 1 && (
-                    <Button type="primary" onClick={this.postVideo} disabled={this.state.videoFile === undefined}>
-                        Done
-                    </Button>
-                )}
+                        current > 0 && (
+                        <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
+                        Previous
+                        </Button>
+                    )}
+                    {
+                        current < steps.length - 1 && (
+                        <Button type="primary" onClick={() => this.next()} disabled={this.state.targetImgs.length === 0}>
+                        Next
+                        </Button>
+                    )}
+                    {
+                        current === steps.length - 1 && (
+                        <Button type="primary" onClick={this.postVideo} disabled={this.state.videoFile === undefined}>
+                            Done
+                        </Button>
+                    )}
+                    </div>
                 </div>
-            </div>
+            </Spin>
         </div>
     </div>
     );

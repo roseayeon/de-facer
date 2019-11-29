@@ -190,6 +190,17 @@ class Page2 extends React.Component {
         })
     }
 
+    getCardStyle = (url) => {
+        let retVal = {}
+        var index = this.state.targetImgs.indexOf(url);
+        if ( index > -1 ){
+            retVal = { width: 210, border: "2px solid #1890ff" }
+        } else {
+            retVal = { width: 210 }
+        }
+        return retVal
+    }
+
     render() {
         const { current, fileList } = this.state;
 
@@ -279,10 +290,10 @@ class Page2 extends React.Component {
                         <Row gutter={16}>
                             {
                                 fileList.map(item => (
-                                    <Col span={6}>
+                                    <Col span={6} key={item.name}>
                                         <Card
                                             hoverable
-                                            style={{ width: 200 }}
+                                            style={this.getCardStyle(item.url)}
                                             cover={<img alt={item.name} src={item.thumbUrl} />}
                                         >
                                             <Meta title={<Checkbox value={item.url} onChange={this.clickedImage}>{ item.name } </Checkbox>} />

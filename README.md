@@ -12,3 +12,9 @@ export GOOGLE_APPLICATION_CREDENTIALS="[PATH TO service_key.json]"
 ```
 python3 server/manage.py
 ```
+
+### Web
+```
+npm install
+npm start
+```

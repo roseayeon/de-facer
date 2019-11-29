@@ -84,7 +84,7 @@ def process():
 
         targets_path_raw = ast.literal_eval(request.form["targets"])
         for idx, path_raw in enumerate(targets_path_raw):
-            path = os.path.join(app.root_path, "tmp", "targets", f"{uid}_{idx}")
+            path = os.path.join(app.root_path, "tmp", "targets", "{}_{}".format(uid, idx))
             urlretrieve(path_raw, path)
             targets_path.append(path)
 

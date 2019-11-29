@@ -39,7 +39,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
   targets_encoding = resnet(torch.stack(targets_aligned).to(device)).detach().cpu()
 
   # replace image
-  if replace_path != "":
+  if replace_path is not None:
     replace_img = cv2.imread(replace_path, cv2.IMREAD_UNCHANGED)
     replace_alpha = replace_img[:,:,3] / 255.0
     replace_alpha = cv2.merge((replace_alpha, replace_alpha, replace_alpha))
@@ -62,7 +62,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
   
       # Detect faces
       boxes, _ = mtcnn.detect(small_frame) # decrease of face size
-      
+    
       # Draw box of face
       faces = []
       for box in boxes:
@@ -97,7 +97,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
         if not target_detected:
           w = box[2]-box[0]
           h = box[3]-box[1]
-          if replace_path == "":
+          if replace_path is None:
             # Blur face
             face = frame[box[1]:box[3], box[0]:box[2]]
             # select blur method

@@ -75,8 +75,8 @@ def process():
         input_path = None
         targets_path = []
         replace_path = None # to blur, should be None
-        output_path = os.path.join(app.root_path, "tmp", "outputs", uid)
-        gcp_output_path = "targets/" + uid
+        output_path = os.path.join(app.root_path, "tmp", "outputs", uid + ".avi")
+        gcp_output_path = "outputs/" + uid
 
         video = request.files["video"]
         input_path = os.path.join(app.root_path, "tmp", "videos", uid)
@@ -94,10 +94,9 @@ def process():
             replacement.save(replace_path)
 
         face.process_video(input_path, targets_path, replace_path, output_path)
-
         upload_to_storage_from_local(gcp_output_path, output_path)
 
-        return jsonify({"url": gcp_output_path})
+        return jsonify({"url": str.format(STORAGE_URL_FORMAT, BUCKET_NAME, gcp_output_path)})
     finally:
         if input_path is not None:
             os.remove(input_path)

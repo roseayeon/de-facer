@@ -10,7 +10,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/URIeCOKLMAbRXaeXoNqN.svg',
     name: 'step1',
-    nameEn: 'Upload Your Target Image File',
+    nameEn: 'Upload a target image',
     svgBg: (
       <svg
         width="213px"
@@ -54,7 +54,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/qXncdwwUTTgUFnsbCNCE.svg',
     name: 'step2',
-    nameEn: 'Choose Your De-face Type (Blur/Emoji/Image)',
+    nameEn: 'Choose your replacement type (blur/image)',
     svgBg: (
       <svg
         width="207px"
@@ -100,7 +100,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/YFXXZocxAgjReehpPNbX.svg',
     name: 'step3',
-    nameEn: 'Upload Your Video',
+    nameEn: 'Upload a video',
     svgBg: (
       <svg
         width="215px"
@@ -133,7 +133,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/VPuetGsvJuYBwoDkZWFW.svg',
     name:'step4',
-    nameEn: 'Get The De-faced Video!',
+    nameEn: 'Get the processed video!',
     svgBg: (
       <svg
         width="193px"

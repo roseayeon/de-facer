@@ -3,7 +3,7 @@
 ### Installation
 
 ```
-pip3 install torch flask facenet-pytorch opencv-python google-cloud-storage
+pip3 install torch torchvision flask facenet-pytorch opencv-python google-cloud-storage
 
 export GOOGLE_APPLICATION_CREDENTIALS="[PATH TO service_key.json]"
 ```

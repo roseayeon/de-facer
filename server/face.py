@@ -128,7 +128,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
         if not target_detected:
           w = box[2]-box[0]
           h = box[3]-box[1]
-          if replace_path == "":
+          if replace_path is None:
             # Blur face
             face = frame[box[1]:box[3], box[0]:box[2]]
             # select blur method
@@ -197,5 +197,5 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('../media/video.mp4', ['../media/target.jpg'], '', 'output.avi')
+    process_video('../media/video.mp4', ['../media/target.jpg'], None, 'output.avi')
 

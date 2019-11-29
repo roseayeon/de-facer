@@ -500,3 +500,9 @@ svg {
   display: flex;
   justify-content: center;
 }
+
+.resultWrapper {
+  .ant-result {
+    padding-bottom: 20px;
+  }
+}

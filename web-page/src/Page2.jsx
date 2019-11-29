@@ -280,11 +280,11 @@ class Page2 extends React.Component {
                         {
                             this.state.radioValue === "image" &&
                             <div>
-                                <div>
-                                <Result
-                                    icon={<Icon type="file-image" theme="twoTone" />}
-                                    title="Upload a transparent image that you want to replace others' faces!"
-                                />
+                                <div className="resultWrapper">
+                                    <Result
+                                        icon={<Icon type="file-image" theme="twoTone" />}
+                                        title="Upload a transparent image that you want to replace others' faces!"
+                                    />
                                 </div>
                                 <div className="uploadWrapper">
                                     <Upload {...replaceProps}>
@@ -311,7 +311,7 @@ class Page2 extends React.Component {
                 title: 'Video',
                 description: 'Upload Your Video',
                 content:
-                    <div>
+                    <div className="resultWrapper">
                             {
                                 this.state.videoFile === undefined &&
                                 <Dragger {...videoProps}>
@@ -355,7 +355,7 @@ class Page2 extends React.Component {
             </div>
             <div className="page">
             <h2> Try with Your Own Image & Video! </h2>
-            <Spin spinning={this.state.showLoading} tip="Loading...">
+            <Spin spinning={this.state.showLoading} tip="Processing...">
                 <div>
                     <Steps current={current}>
                         {

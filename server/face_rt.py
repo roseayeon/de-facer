@@ -41,14 +41,15 @@ class FaceRealTime():
   
     small_frame = cv2.resize(frame, (0,0), fx=0.25, fy=0.25)
     small_frame = Image.fromarray(cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB))
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    frame_img = Image.fromarray(frame)
-    frame_w, frame_h = frame_img.size
   
     # Detect faces
     boxes, _ = mtcnn.detect(small_frame) # decrease of face size
     if boxes is None:
       return frame
+
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    frame_img = Image.fromarray(frame)
+    frame_w, frame_h = frame_img.size
     
     # Draw box of face
     faces = []
@@ -97,7 +98,7 @@ class FaceRealTime():
           cover_face = cv2.resize(self.replace_img, (w, h))
           alpha = cv2.resize(self.replace_alpha, (w, h))
           frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
-    return frame
+    return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
   def get_jpg_bytes(self):
     frame = self.get_frame()

@@ -67,6 +67,7 @@ def get_target_images():
         upload_to_storage_from_file(path, image)
         return Response()
 
+# Receive Video / Target Images' URLs / Replacement Image(Optional) to de-face the video
 @app.route("/process", methods=["POST"])
 @cross_origin()
 def process():
@@ -121,6 +122,7 @@ def gen():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpg_bytes + b'\r\n\r\n')
 
+# Receive Realtime video URL / Target Images' URLs / Replacement Image URL(Optional) to de-face in real-time.
 @app.route("/live", methods=["POST"])
 @cross_origin()
 def live():

@@ -121,7 +121,7 @@ def gen():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpg_bytes + b'\r\n\r\n')
 
-@app.route("/live", methods=["GET"])
+@app.route("/live", methods=["POST"])
 @cross_origin()
 def live():
     global REALTIME_URL, REALTIME_TARGETS_PATH, REALTIME_REPLACEMENT_PATH

@@ -193,7 +193,7 @@ class Page2 extends React.Component {
         let retVal = {}
         var index = this.state.targetImgs.indexOf(url);
         if ( index > -1 ){
-            retVal = { width: 210, border: "2px solid #1890ff" }
+            retVal = { width: 210, border: "2px solid #1890ff", marginBottom: -2 }
         } else {
             retVal = { width: 210 }
         }

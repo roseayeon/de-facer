@@ -42,7 +42,7 @@ const Banner = ({ isMobile }) => {
         )}
         <QueueAnim className="textWrapper" key="text" type="bottom">
           <h1 key="h1">De-facer</h1>
-          <p> De-facer is a tool which protects the faces to protect the portrait rights which is not in the target faces from the given image or video. You can blur or cover the faces with other images! 😉" </p>
+          <p> <b>De-facer</b> is a tool that protects portrait-rights of faces which are <b>not targeted</b> from the given video. You can <b>blur</b> or <b>cover faces with other images</b>. Even real-time works! 😉 </p>
           <div
             key="promote"
             className="bannerPromote"

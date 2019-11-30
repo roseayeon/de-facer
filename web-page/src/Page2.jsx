@@ -484,7 +484,7 @@ class Page2 extends React.Component {
                         }
                     <div className="steps-action">
                     {
-                        current > 0 &&  (
+                        current > 0 &&  responseUrl === '' && (
                         <Button style={{ marginRight: 8 }} onClick={this.clickPrev}>
                         Previous
                         </Button>

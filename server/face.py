@@ -34,15 +34,12 @@ def process_video(video_path, targets_path, replace_path, output_path):
   origin_fps = cap.get(cv2.CAP_PROP_FPS)
   count = 0
   # encoding target face
-  targets_img = []
+  targets_encoding = []
   for target_path in targets_path:
     target_img = cv2.imread(target_path, cv2.IMREAD_COLOR)
     target_img = Image.fromarray(cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB))
-    targets_img.append(target_img)
-
-  targets_aligned = mtcnn(targets_img)
-  targets_aligned = [target[0] for target in targets_aligned]
-  targets_encoding = resnet(torch.stack(targets_aligned).to(device)).detach().cpu()
+    target_aligned = mtcnn(target_img)[0]
+    targets_encoding.append(resnet(torch.stack([target_aligned]).to(device)).detach().cpu())
 
   # replace image
   if replace_path is not None:
@@ -197,5 +194,5 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('../media/video.mp4', ['../media/target.jpg'], None, 'output.avi')
+    process_video('../media/video.mp4', ['../media/target.jpg', '../media/target.jpg'], None, 'output.avi')
 

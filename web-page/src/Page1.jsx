@@ -133,7 +133,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/VPuetGsvJuYBwoDkZWFW.svg',
     name:'step4',
-    nameEn: 'Get the processed video!',
+    nameEn: 'Get the de-faced video!',
     svgBg: (
       <svg
         width="193px"

@@ -76,11 +76,11 @@ def process():
         targets_path = []
         replace_path = None # to blur, should be None
         output_path = os.path.join(app.root_path, "tmp", "outputs", uid + ".avi")
-        gcp_output_path = "outputs/" + uid
 
         video = request.files["video"]
         input_path = os.path.join(app.root_path, "tmp", "videos", uid)
         video.save(input_path)
+        gcp_output_path = "outputs/" + video.filename.split(".")[0] + "-defaced.avi"
 
         targets_path_raw = ast.literal_eval(request.form["targets"])
         for idx, path_raw in enumerate(targets_path_raw):

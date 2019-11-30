@@ -14,10 +14,11 @@ We used the [pytorch implementation](https://github.com/timesler/facenet-pytorch
 ## Features
 
 ### Video de-facing
-Sample bluh bluh
+![](example/mamison.gif)
+![](example/harrypotter.gif)
 
 ### Real-time de-facing
-Sample bluh bluh
+![](example/realtime.gif)
 
 ## Installation
 

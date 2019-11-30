@@ -42,7 +42,7 @@ const Banner = ({ isMobile }) => {
         )}
         <QueueAnim className="textWrapper" key="text" type="bottom">
           <h1 key="h1">De-facer</h1>
-          <p> De-facer is a tool which protects the faces to protect the portrait rights which is not in the target faces from the given image or video. You can blur or cover the faces with other images. Even with emoji 😀, too!" </p>
+          <p> De-facer is a tool which protects the faces to protect the portrait rights which is not in the target faces from the given image or video. You can blur or cover the faces with other images! 😉" </p>
           {/* <div className="banner-btns" key="buttons">
             <Link to={utils.getLocalizedPathname('/docs/react/introduce', isZhCN)}>
               <Button type="primary" className="banner-btn components">

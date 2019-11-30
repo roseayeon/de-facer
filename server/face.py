@@ -55,7 +55,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cap.release()
 
   # detect faces
-  boxes, _ = mtcnn.detect(batches)
+  boxes, face_probs = mtcnn.detect(batches)
   print_msg(start_ms, "mtcnn end")
 
   faces = []
@@ -85,15 +85,19 @@ def process_video(video_path, targets_path, replace_path, output_path):
     idx = 0
     for j in range(start_idx, i+1):
       frame = frames_tracked[j]
-      for box in boxes[j]:
+      for (box, prob) in zip(boxes[j], face_probs[j]):
+        encoding = encodings[idx]
+        idx += 1
+        # if detected face prob is < THRESHOLD, don't recognize as face
+        if prob < FACE_THRESHOLD:
+          continue
+
         box = [
           int(max(box[0]*4, 0)),
           int(max(box[1]*4, 0)),
           int(min(box[2]*4, video_w)),
           int(min(box[3]*4, video_h)),
         ]
-        encoding = encodings[idx]
-        idx += 1
 
         target_detected = False
         for target_encoding in targets_encoding: 
@@ -119,8 +123,9 @@ def process_video(video_path, targets_path, replace_path, output_path):
             cover_face = cv2.resize(replace_img, (w, h))
             alpha = cv2.resize(replace_alpha, (w, h))
             frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
+
       writer.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-    
+ 
     faces = []
     start_idx = i+1
 
@@ -173,5 +178,5 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('../media/video.mp4', ['../media/target.jpg', '../media/target.jpg'], None, 'output.mp4')
+    process_video('../media/videos/yanolja.mp4', ['../media/target/hani.png'], '../media/replace/bomb.png', 'output.mp4')
 

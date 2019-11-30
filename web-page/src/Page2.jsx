@@ -212,7 +212,7 @@ class Page2 extends React.Component {
         ]).then( 
             response => { 
                if(response[0].status === 200){
-                    window.open("http://34.82.172.56/real_time", "_blank")
+                    window.open("http://"+window.location.hostname+"/real_time", "_blank")
                }
         })
 
@@ -484,7 +484,7 @@ class Page2 extends React.Component {
                         }
                     <div className="steps-action">
                     {
-                        current > 0 && responseUrl === '' && (
+                        current > 0 &&  (
                         <Button style={{ marginRight: 8 }} onClick={this.clickPrev}>
                         Previous
                         </Button>

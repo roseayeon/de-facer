@@ -1,7 +1,8 @@
 from face_rt import FaceRealTime
-from flask import Flask, jsonify, request, Response, send_from_directory
+from flask import Flask, jsonify, redirect, request, Response, send_from_directory
 from flask_cors import CORS, cross_origin
 from google.cloud import storage
+from urllib.parse import urlparse
 from urllib.request import urlretrieve
 import ast
 import face
@@ -24,8 +25,8 @@ def init():
     pass
 
 @app.route('/')
-def hello_world():
-    return 'Team 13 AI Project'
+def home():
+    return redirect("http://" + urlparse(request.base_url).hostname + ":3000")
 
 @app.route("/robots.txt")
 def robot():

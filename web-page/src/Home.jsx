@@ -55,9 +55,9 @@ function getStyle() {
 }
 // eslint-disable-next-line react/prefer-stateless-function
 class Home extends React.Component {
-  static contextTypes = {
-    isMobile: PropTypes.bool.isRequired,
-  };
+  // static contextTypes = {
+  //   isMobile: PropTypes.bool.isRequired,
+  // };
 
   render() {
     const { isMobile } = this.context;

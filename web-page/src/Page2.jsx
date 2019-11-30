@@ -113,7 +113,6 @@ class Page2 extends React.Component {
                 thumbUrl: imgUrl
             });
         }
-        // info[0].data.images.forEach(element => console.log(element));
         this.setState({
             fileList,
             fetching: false // done!
@@ -194,7 +193,7 @@ class Page2 extends React.Component {
         let retVal = {}
         var index = this.state.targetImgs.indexOf(url);
         if ( index > -1 ){
-            retVal = { width: 210, border: "2px solid #1890ff" }
+            retVal = { width: 210, border: "2px solid #1890ff", marginBottom: -2 }
         } else {
             retVal = { width: 210 }
         }
@@ -288,6 +287,7 @@ class Page2 extends React.Component {
                             </Button>
                         </Upload>
                         <Row gutter={16}>
+                            <Checkbox.Group value={this.state.targetImgs}>
                             {
                                 fileList.map(item => (
                                     <Col span={6} key={item.name}>
@@ -301,6 +301,7 @@ class Page2 extends React.Component {
                                     </Col>
                                 ))
                             }
+                            </Checkbox.Group>
                         </Row>
                     </div>,
             },

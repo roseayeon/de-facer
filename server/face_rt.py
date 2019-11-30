@@ -36,7 +36,7 @@ class FaceRealTime():
 
     self.count += 1
     # reduce fps because we cannot use batch
-    if self.count % 2 == 0:
+    if self.count % 3 != 0:
       return None
   
     small_frame = cv2.resize(frame, (0,0), fx=0.25, fy=0.25)

@@ -1,38 +1,18 @@
 import cv2
-from torchvision import transforms
 import torchvision.transforms.functional as F
-from facenet_pytorch import MTCNN, InceptionResnetV1
-import torch
 import numpy as np
 from PIL import Image, ImageDraw
-import time
-
-def prewhiten(x):
-  mean = x.mean()
-  std = x.std()
-  std_adj = std.clamp(min=1.0/(float(x.numel())**0.5))
-  y = (x - mean) / std_adj
-  return y
-
-MAX_FRAME = 1500 # for testing
-FACE_SIZE = 160
-REDUCE_RATE = 0.03
-DIFF_THRESHOLD = 0.9
-MAX_FACES_LEN = 200
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-mtcnn = MTCNN(keep_all=True, min_face_size=20, thresholds=[0.6, 0.75, 0.9], device=device)
-resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
-
-def get_ms():
-  return int(time.time()*1000.0)
+import torch
+from const import *
 
 def process_video(video_path, targets_path, replace_path, output_path):
-  start_time = get_ms()
+  start_ms = get_ms()
   cap = cv2.VideoCapture(video_path)
   video_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
   video_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
   origin_fps = cap.get(cv2.CAP_PROP_FPS)
   count = 0
+
   # encoding target face
   targets_encoding = []
   for target_path in targets_path:
@@ -48,7 +28,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
     replace_alpha = cv2.merge((replace_alpha, replace_alpha, replace_alpha))
     replace_img = cv2.cvtColor(replace_img, cv2.COLOR_BGRA2RGB)
   
-  print ("capture start", get_ms()-start_time) 
+  print_msg (start_ms, "capture start")
   frames_tracked = []
   batches = []
   while True:
@@ -69,17 +49,18 @@ def process_video(video_path, targets_path, replace_path, output_path):
       break
 
     # for develop
-    if count > MAX_FRAME:
+    if DEBUG and count > MAX_FRAME:
       break
 
   cap.release()
+
   # detect faces
   boxes, _ = mtcnn.detect(batches)
-  print ("mtcnn end", get_ms()-start_time) 
+  print_msg(start_ms, "mtcnn end")
 
-  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'DIVX'), origin_fps, (video_w,video_h))
   faces = []
   start_idx = 0
+  writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), origin_fps, (video_w,video_h))
   for (i, frame) in enumerate(frames_tracked):
     # crop recognized face 
     if boxes[i] is None:
@@ -100,20 +81,19 @@ def process_video(video_path, targets_path, replace_path, output_path):
       continue
 
     encodings = resnet(torch.stack(faces)).detach().cpu()
-    print ("resnet end", get_ms() - start_time)
+    print_msg(start_ms, "resnet end")
     idx = 0
     for j in range(start_idx, i+1):
       frame = frames_tracked[j]
       for box in boxes[j]:
-        encoding = encodings[idx]
-        idx += 1
-
         box = [
           int(max(box[0]*4, 0)),
           int(max(box[1]*4, 0)),
           int(min(box[2]*4, video_w)),
           int(min(box[3]*4, video_h)),
         ]
+        encoding = encodings[idx]
+        idx += 1
 
         target_detected = False
         for target_encoding in targets_encoding: 
@@ -146,20 +126,19 @@ def process_video(video_path, targets_path, replace_path, output_path):
 
   if len(faces) != 0:
     encodings = resnet(torch.stack(faces)).detach().cpu()
-    print ("resnet end", get_ms() - start_time)
+    print_msg (start_ms, "resnet end")
     idx = 0
     for j in range(start_idx, len(frames_tracked)):
       frame = frames_tracked[j]
       for box in boxes[j]:
-        encoding = encodings[idx]
-        idx += 1
-
         box = [
           int(max(box[0]*4, 0)),
           int(max(box[1]*4, 0)),
           int(min(box[2]*4, video_w)),
           int(min(box[3]*4, video_h)),
         ]
+        encoding = encodings[idx]
+        idx += 1
 
         target_detected = False
         for target_encoding in targets_encoding: 
@@ -189,10 +168,10 @@ def process_video(video_path, targets_path, replace_path, output_path):
 
 
   writer.release()
-  print("finish", get_ms()-start_time)
+  print_msg(start_ms, "finish")
 
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('../media/video.mp4', ['../media/target.jpg', '../media/target.jpg'], None, 'output.avi')
+    process_video('../media/video.mp4', ['../media/target.jpg', '../media/target.jpg'], None, 'output.mp4')
 

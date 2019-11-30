@@ -199,7 +199,12 @@ class Page2 extends React.Component {
         let retVal = {}
         var index = this.state.targetImgs.indexOf(url);
         if ( index > -1 ){
-            retVal = { width: 210, border: "2px solid #1890ff", marginBottom: -2 }
+            var position = this.state.fileList.findIndex((e)=> e.url === url)
+            if((position+1)%4 === 0){
+                retVal = { width: 210, border: "2px solid #1890ff", marginBottom: -1 }
+            } else {
+                retVal = { width: 210, border: "2px solid #1890ff", marginBottom: -2 }
+            }
         } else {
             retVal = { width: 210 }
         }
@@ -284,7 +289,7 @@ class Page2 extends React.Component {
         const steps = [
             {
                 title: 'Target Image',
-                description: "Choose a target image",
+                description: "Choose a image that you don't want to replace",
                 content: 
                     <div>
                         <Upload {...targetProps}>

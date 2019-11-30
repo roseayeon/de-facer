@@ -1,5 +1,5 @@
 from face_rt import FaceRealTime
-from flask import Flask, jsonify, request, Response, send_from_directory, render_template
+from flask import Flask, jsonify, request, Response, send_from_directory
 from flask_cors import CORS, cross_origin
 from google.cloud import storage
 from urllib.request import urlretrieve
@@ -140,8 +140,8 @@ def live():
         replacement = request.files["replacement"]
         REALTIME_REPLACEMENT_PATH = os.path.join(app.root_path, "tmp", "replacements", uid)
         replacement.save(REALTIME_REPLACEMENT_PATH)
-    
-    return render_template('index.html')
+
+    return Response()
 
 @app.route("/real_time")
 def real_time():

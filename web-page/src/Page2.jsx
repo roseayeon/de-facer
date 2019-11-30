@@ -83,6 +83,7 @@ class Page2 extends React.Component {
             videoFile: undefined,
             replaceImg: [],
             showLoading: false,
+            responseUrl: '',
         }
     }
 
@@ -126,13 +127,18 @@ class Page2 extends React.Component {
         });
         const info = await Promise.all([
             service.postProcess(this.state.targetImgs, this.state.videoFile, this.state.replaceImg)
-        ])
-
+        ]).then( 
+            response => { 
+                console.log(response); 
+                this.setState({
+                    responseUrl: response[0].data.url
+                })
+            })
         this.setState({
             fetching: false, // done!
             showLoading: false,
         });
-        message.success('Processing complete!')
+        message.success('De-facing complete!')
     }
 
     clickPrev = () => {
@@ -278,7 +284,7 @@ class Page2 extends React.Component {
         const steps = [
             {
                 title: 'Target Image',
-                description: "Choose your target image",
+                description: "Choose a target image",
                 content: 
                     <div>
                         <Upload {...targetProps}>
@@ -307,7 +313,7 @@ class Page2 extends React.Component {
             },
             {
                 title: 'Replacement Type',
-                description: 'Choose Your Replacement Type',
+                description: 'Choose a Replacement Type',
                 content: 
                     <div>
                         <div className="radioWrapper">
@@ -348,7 +354,7 @@ class Page2 extends React.Component {
             },
             {
                 title: 'Video',
-                description: 'Upload Your Video',
+                description: 'Upload a Video',
                 content:
                     <div className="resultWrapper">
                             {
@@ -362,13 +368,23 @@ class Page2 extends React.Component {
                                 </Dragger>
                             }
                             {
-                                this.state.videoFile !== undefined &&
+                                this.state.videoFile !== undefined && this.state.responseUrl === '' &&
                                 <Result
                                     status="success"
                                     title="Video is Uploaded"
                                     subTitle="Click Done button to deface your video"
                                     extra={[
                                     <Button key="buy" onClick={()=> this.setState({videoFile: undefined})}>Upload other video</Button>,
+                                    ]}
+                                />
+                            }
+                            {
+                                this.state.responseUrl !== '' &&
+                                <Result
+                                    icon={<Icon type="download" />}
+                                    title="Get the De-faced Video"
+                                    extra={[
+                                        <Button key="buy" onClick={()=> window.open(this.state.responseUrl, "_blank")}>Download</Button>,
                                     ]}
                                 />
                             }
@@ -394,7 +410,7 @@ class Page2 extends React.Component {
             </div>
             <div className="page">
             <h2> Try with Your Own Image & Video! </h2>
-            <Spin spinning={this.state.showLoading} tip="Processing...">
+            <Spin spinning={this.state.showLoading} tip="De-facing...">
                 <div>
                     <Steps current={current}>
                         {
@@ -406,19 +422,19 @@ class Page2 extends React.Component {
                     <div className="steps-content">{steps[current].content}</div>
                     <div className="steps-action">
                     {
-                        current > 0 && (
+                        current > 0 && this.state.responseUrl === '' && (
                         <Button style={{ marginRight: 8 }} onClick={this.clickPrev}>
                         Previous
                         </Button>
                     )}
                     {
-                        current < steps.length - 1 && (
+                        current < steps.length - 1 && this.state.responseUrl === '' && (
                         <Button type="primary" onClick={() => this.next()} disabled={this.state.targetImgs.length === 0}>
                         Next
                         </Button>
                     )}
                     {
-                        current === steps.length - 1 && (
+                        current === steps.length - 1 && this.state.responseUrl === '' &&(
                         <Button type="primary" onClick={this.postVideo} disabled={this.state.videoFile === undefined}>
                             Done
                         </Button>

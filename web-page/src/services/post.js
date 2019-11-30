@@ -11,8 +11,8 @@ export function postProcess(targetUrls, videoFile, replacement = []) {
     console.log(targetUrls)
     console.log(videoFile)
     if (replacement.length !== 0) {
-        form.append('replacement',replacement[0])
-        console.log(replacement[0])
+        form.append('replacement',replacement[0].originFileObj)
+        console.log(replacement[0].originFileObj)
     } else {
         console.log('replacement is empty')
     }

@@ -108,11 +108,14 @@ def process():
         if os.path.isfile(output_path):
             os.remove(output_path)
 
-FACE_REALTIME = None
+REALTIME_URL = ""
+REALTIME_TARGETS_PATH = []
+REALTIME_REPLACEMENT_PATH = ""
 
 def gen():
+    face_realtime = FaceRealTime(REALTIME_URL, REALTIME_TARGETS_PATH, REALTIME_REPLACEMENT_PATH)
     while True:
-        jpg_bytes = FACE_REALTIME.get_jpg_bytes()
+        jpg_bytes = face_realtime.get_jpg_bytes()
         if jpg_bytes == None:
             continue
         yield (b'--frame\r\n'
@@ -121,24 +124,23 @@ def gen():
 @app.route("/live", methods=["GET"])
 @cross_origin()
 def live():
-    global FACE_REALTIME
+    global REALTIME_URL, REALTIME_TARGETS_PATH, REALTIME_REPLACEMENT_PATH
     uid = random_name()
-    targets_path = []
-    replace_path = None
+    REALTIME_TARGETS_PATH = []
+    REALTIME_REPLACEMENT_PATH = None
 
-    url = request.form["url"]
+    REALTIME_URL = request.form["url"]
     targets_path_raw = ast.literal_eval(request.form["targets"])
     for idx, path_raw in enumerate(targets_path_raw):
         path = os.path.join(app.root_path, "tmp", "targets", "{}_{}".format(uid, idx))
         urlretrieve(path_raw, path)
-        targets_path.append(path)
+        REALTIME_TARGETS_PATH.append(path)
 
     if "replacement" in request.files:
         replacement = request.files["replacement"]
-        replace_path = os.path.join(app.root_path, "tmp", "replacements", uid)
-        replacement.save(replace_path)
+        REALTIME_REPLACEMENT_PATH = os.path.join(app.root_path, "tmp", "replacements", uid)
+        replacement.save(REALTIME_REPLACEMENT_PATH)
     
-    FACE_REALTIME = FaceRealTime(url, targets_path, replace_path)
     return render_template('index.html')
 
 @app.route("/real_time")

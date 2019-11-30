@@ -6,7 +6,7 @@ DEBUG = True
 MAX_FRAME = 1500 # for testing
 FACE_SIZE = 160
 REDUCE_RATE = 0.03
-DIFF_THRESHOLD = 0.9
+DIFF_THRESHOLD = 0.75
 MAX_FACES_LEN = 200
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 mtcnn = MTCNN(keep_all=True, min_face_size=20, thresholds=[0.6, 0.75, 0.9], device=device)

@@ -13,16 +13,16 @@ Therefore, we defined our problem as '**How can we protect others’ portrait po
 ## Models
 We used the [pytorch implementation](https://github.com/timesler/facenet-pytorch) of ["FaceNet: A Unified Embedding for Face Recognition and Clustering"](https://arxiv.org/abs/1503.03832).
 
+## Flow
+<img src="figures/diagram.png" width="600">
+
 ## Features
 
-### Flow
-![](figures/diagram.png)
-
-### Video de-facing
+### Video de-facing (with replace image)
 <img src="figures/mamison.gif" width="600">
 <img src="figures/harrypotter.gif" width="600">
 
-### Real-time de-facing
+### Real-time de-facing (with Blur)
 <img src="figures/realtime.gif" width="600">
 
 ## Installation

@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+const ip = window.location.hostname;
 export function getTargets() {
-    return axios.get('http://34.82.172.56/targets');
+    return axios.get(ip+'/targets');
 }
 export function postProcess(targetUrls, videoFile, replacement = []) {
     let form = new FormData()
@@ -15,13 +16,13 @@ export function postProcess(targetUrls, videoFile, replacement = []) {
     } else {
         console.log('replacement is empty')
     }
-    return axios.post('http://34.82.172.56/process',form);
+    return axios.post(ip+'/process',form);
 }
 
 export function postTarget(targetImage){
     let form = new FormData()
     form.append('image',targetImage)
-    return axios.post('http://34.82.172.56/targets',form)
+    return axios.post(ip+'/targets',form)
 
 }
 
@@ -37,5 +38,5 @@ export function postRealTime(targetUrls, videoUrl, replacement = []) {
     } else {
         console.log('replacement is empty')
     }
-    return axios.post('http://34.82.172.56/live', form);
+    return axios.post(ip+'/live', form);
 }

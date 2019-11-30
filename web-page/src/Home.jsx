@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Banner from './Banner';
 import Page1 from './Page1';
 import Page2 from './Page2';
@@ -55,9 +54,6 @@ function getStyle() {
 }
 // eslint-disable-next-line react/prefer-stateless-function
 class Home extends React.Component {
-  // static contextTypes = {
-  //   isMobile: PropTypes.bool.isRequired,
-  // };
 
   render() {
     const { isMobile } = this.context;

@@ -12,7 +12,6 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "node-sass": "^4.13.0",
-    "prop-types": "^15.7.2",
     "rc-footer": "^0.6.2",
     "rc-queue-anim": "^1.8.3",
     "rc-scroll-anim": "^2.7.4",

@@ -1,15 +1,15 @@
 import React from 'react';
 import { TweenOneGroup } from 'rc-tween-one';
 import QueueAnim from 'rc-queue-anim';
-import { Row, Col } from 'antd';
+import { Row, Col, Icon } from 'antd';
 import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 import 'antd/dist/antd.css';
 import './styles/common.scss';
 
 const page1Data = [
   {
-    img: 'https://gw.alipayobjects.com/zos/rmsportal/URIeCOKLMAbRXaeXoNqN.svg',
     name: 'step1',
+    icon: 'picture',
     nameEn: 'Upload a target image',
     svgBg: (
       <svg
@@ -52,8 +52,8 @@ const page1Data = [
     ),
   },
   {
-    img: 'https://gw.alipayobjects.com/zos/rmsportal/qXncdwwUTTgUFnsbCNCE.svg',
     name: 'step2',
+    icon: 'check-circle',
     nameEn: 'Choose a replacement type (blur/image)',
     svgBg: (
       <svg
@@ -98,8 +98,8 @@ const page1Data = [
     ),
   },
   {
-    img: 'https://gw.alipayobjects.com/zos/rmsportal/YFXXZocxAgjReehpPNbX.svg',
     name: 'step3',
+    icon: 'video-camera',
     nameEn: 'Upload a video or play with Real-time',
     svgBg: (
       <svg
@@ -131,8 +131,8 @@ const page1Data = [
     ),
   },
   {
-    img: 'https://gw.alipayobjects.com/zos/rmsportal/VPuetGsvJuYBwoDkZWFW.svg',
     name:'step4',
+    icon: 'play-square', 
     nameEn: 'Get the de-faced video!',
     svgBg: (
       <svg
@@ -282,7 +282,7 @@ export default class Page1 extends React.PureComponent {
             onMouseLeave={this.onMouseOut}
           >
             <div className="page1Image">
-              <img src={item.img} alt="icon" />
+              <Icon style={{fontSize: 50}} type={item.icon} theme="twoTone" twoToneColor="#6095F9" />
             </div>
             <h3> {item.nameEn} </h3>
           </QueueAnim>

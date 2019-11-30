@@ -54,7 +54,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/qXncdwwUTTgUFnsbCNCE.svg',
     name: 'step2',
-    nameEn: 'Choose your replacement type (blur/image)',
+    nameEn: 'Choose a replacement type (blur/image)',
     svgBg: (
       <svg
         width="207px"
@@ -100,7 +100,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/YFXXZocxAgjReehpPNbX.svg',
     name: 'step3',
-    nameEn: 'Upload a video',
+    nameEn: 'Upload a video or play with Real-time',
     svgBg: (
       <svg
         width="215px"
@@ -133,7 +133,7 @@ const page1Data = [
   {
     img: 'https://gw.alipayobjects.com/zos/rmsportal/VPuetGsvJuYBwoDkZWFW.svg',
     name:'step4',
-    nameEn: 'Get the processed video!',
+    nameEn: 'Get the de-faced video!',
     svgBg: (
       <svg
         width="193px"

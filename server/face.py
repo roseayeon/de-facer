@@ -147,7 +147,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
     faces = []
     start_idx = i+1
 
-  if len(faces) != "":
+  if len(faces) != 0:
     encodings = resnet(torch.stack(faces)).detach().cpu()
     print ("resnet end", get_ms() - start_time)
     idx = 0

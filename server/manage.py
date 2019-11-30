@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request, Response, send_from_directory
+from face_rt import FaceRealTime
+from flask import Flask, jsonify, request, Response, send_from_directory, render_template
 from flask_cors import CORS, cross_origin
 from google.cloud import storage
 from urllib.request import urlretrieve
@@ -107,6 +108,43 @@ def process():
         if os.path.isfile(output_path):
             os.remove(output_path)
 
+FACE_REALTIME = None
+
+def gen():
+    while True:
+        jpg_bytes = FACE_REALTIME.get_jpg_bytes()
+        if jpg_bytes == None:
+            continue
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + jpg_bytes + b'\r\n\r\n')
+
+@app.route("/live", methods=["GET"])
+@cross_origin()
+def live():
+    global FACE_REALTIME
+    uid = random_name()
+    targets_path = []
+    replace_path = None
+
+    url = request.form["url"]
+    targets_path_raw = ast.literal_eval(request.form["targets"])
+    for idx, path_raw in enumerate(targets_path_raw):
+        path = os.path.join(app.root_path, "tmp", "targets", "{}_{}".format(uid, idx))
+        urlretrieve(path_raw, path)
+        targets_path.append(path)
+
+    if "replacement" in request.files:
+        replacement = request.files["replacement"]
+        replace_path = os.path.join(app.root_path, "tmp", "replacements", uid)
+        replacement.save(replace_path)
+    
+    FACE_REALTIME = FaceRealTime(url, targets_path, replace_path)
+    return render_template('index.html')
+
+@app.route("/real_time")
+def real_time():
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 if __name__ == "__main__":
     init()
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=80, debug=True)

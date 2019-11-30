@@ -312,9 +312,10 @@ class Page2 extends React.Component {
                 content: 
                     <div>
                         <Upload {...targetProps}>
-                            <Button>
+                            <Button className="uploadButton">
                                 <Icon type="upload" /> Click to Upload
                             </Button>
+                            We recommend using an image which is similar to the target face in the video.
                         </Upload>
                         <Row gutter={16}>
                             <Checkbox.Group value={this.state.targetImgs}>

@@ -169,7 +169,6 @@ class Page2 extends React.Component {
     }
 
     clickedImage = (e) => {
-        console.log(e.target.value)
         var file = e.target.value;
         var index = this.state.targetImgs.indexOf(file);
         if (index > -1){
@@ -189,7 +188,6 @@ class Page2 extends React.Component {
     }
 
     onReplaceImageChange = (file) => {
-        console.log(file)
         this.setState({
             replaceImg: [file.file],
         })
@@ -227,11 +225,6 @@ class Page2 extends React.Component {
             listType: 'picture',
             accept: 'image/*',
             fileList: fileList,
-            // showUploadList: {
-            //     showRemoveIcon: false,
-            //     showPreviewIcon: true,
-            //     showDownloadIcon: false,
-            // },
             showUploadList: false,
             onChange: this.fetchTargets,
             beforeUpload(file) {
@@ -247,7 +240,6 @@ class Page2 extends React.Component {
             name: 'file',
             multiple: false,
             action: this.onVideoChange,
-            // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             accept: 'video/*',
             showUploadList: false,
             beforeUpload(file) {

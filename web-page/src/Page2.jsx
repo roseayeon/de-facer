@@ -312,9 +312,10 @@ class Page2 extends React.Component {
                 content: 
                     <div>
                         <Upload {...targetProps}>
-                            <Button>
+                            <Button className="uploadButton">
                                 <Icon type="upload" /> Click to Upload
                             </Button>
+                            We recommend using an image which is similar to the target face in the video.
                         </Upload>
                         <Row gutter={16}>
                             <Checkbox.Group value={this.state.targetImgs}>
@@ -436,7 +437,7 @@ class Page2 extends React.Component {
                             >
                             <Result
                                 icon={<Icon type="video-camera" />}
-                                title="Great, let's deface with webcam in real-time!"
+                                title="Great! Let's deface with webcam in real-time!"
                                 subTitle={<div>URL:<Input placeholder="Input Video URL (ex. rtsp://*)" style={{width: 350, marginLeft: 20}} value={this.state.videoUrl} onChange={e => this.setState({videoUrl: e.target.value})}/></div>}
                                 extra={<Button type="primary" onClick={this.onRealtimeClick}>Play with real-time</Button>}
                             />

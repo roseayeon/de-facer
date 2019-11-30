@@ -88,6 +88,7 @@ class Page2 extends React.Component {
             showLoading: false,
             responseUrl: '',
             videoMode: 'uploadVideo',
+            videoUrl: '',
         }
     }
 
@@ -199,6 +200,25 @@ class Page2 extends React.Component {
         this.setState({
             replaceImg: [file.file],
         })
+    }
+
+    onRealtimeClick = async () => {
+        this.setState({
+            fetching: true // requesting..
+        });
+
+        const info = await Promise.all([
+            service.postRealTime(this.state.targetImgs, this.state.videoUrl, this.state.replaceImg),
+        ]).then( 
+            response => { 
+               if(response[0].status === 200){
+                    window.open("http://34.82.172.56/real_time", "_blank")
+               }
+        })
+
+        this.setState({
+            fetching: false // done!
+        });
     }
 
     getCardStyle = (url) => {
@@ -417,8 +437,8 @@ class Page2 extends React.Component {
                             <Result
                                 icon={<Icon type="video-camera" />}
                                 title="Great, let's deface with webcam in real-time!"
-                                subTitle={<div>URL:<Input placeholder="Basic usage" style={{width: 350, marginLeft: 20}}/></div>}
-                                extra={<Button type="primary">Play with real-time</Button>}
+                                subTitle={<div>URL:<Input placeholder="Input Video URL (ex. rtsp://*)" style={{width: 350, marginLeft: 20}} value={this.state.videoUrl} onChange={e => this.setState({videoUrl: e.target.value})}/></div>}
+                                extra={<Button type="primary" onClick={this.onRealtimeClick}>Play with real-time</Button>}
                             />
                             </TabPane>
                         </Tabs>

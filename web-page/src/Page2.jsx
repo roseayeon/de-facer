@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Button, Icon, message, Radio, Steps, Result, Spin, Card, Col, Row, Checkbox } from 'antd';
+import { Upload, Button, Icon, message, Steps, Result, Spin, Card, Col, Row, Checkbox, Tabs, Input } from 'antd';
 import ScrollParallax from 'rc-scroll-anim/lib/ScrollParallax';
 import 'antd/dist/antd.css';
 
@@ -71,6 +71,9 @@ const svgBg = [
 ];
 const svgChildren = svgBgToParallax(svgBg);
 const { Dragger } = Upload;
+const { Step } = Steps;
+const { Meta } = Card; 
+const { TabPane } = Tabs;
 
 class Page2 extends React.Component {
     constructor(props) {
@@ -84,6 +87,7 @@ class Page2 extends React.Component {
             replaceImg: [],
             showLoading: false,
             responseUrl: '',
+            videoMode: 'uploadVideo',
         }
     }
 
@@ -164,8 +168,12 @@ class Page2 extends React.Component {
         this.setState({ videoFile: file});
     }
 
-    onRadioChange = (event) => {
-        this.setState({radioValue: event.target.value})
+    onRadioChange = (key) => {
+        this.setState({radioValue: key})
+    }
+
+    onVideoModeChange = (key) => {
+        this.setState({videoMode: key})
     }
 
     clickedImage = (e) => {
@@ -210,7 +218,7 @@ class Page2 extends React.Component {
     }
 
     render() {
-        const { current, fileList } = this.state;
+        const { current, fileList, responseUrl } = this.state;
 
         const targetProps = {
             name: 'file',
@@ -276,8 +284,7 @@ class Page2 extends React.Component {
             },
         }
 
-        const { Step } = Steps;
-        const { Meta } = Card; 
+        
         const steps = [
             {
                 title: 'Target Image',
@@ -310,21 +317,37 @@ class Page2 extends React.Component {
             },
             {
                 title: 'Replacement Type',
-                description: 'Choose a Replacement Type',
+                description: 'choose either blur or transparent image',
                 content: 
                     <div>
-                        <div className="radioWrapper">
-                        <Radio.Group defaultValue={this.state.radioValue} buttonStyle="solid" size="large" onChange={this.onRadioChange}>
-                            <Radio.Button value="blur"> Blur </Radio.Button>
-                            <Radio.Button value="image"> Image </Radio.Button>
-                        </Radio.Group> 
-                        </div>
-                        {
-                            this.state.radioValue === "image" &&
+                        <Tabs defaultActiveKey={this.state.radioValue} activeKey={this.state.radioValue} size="large" onChange={this.onRadioChange}>
+                            <TabPane
+                            tab={
+                                <span>
+                                Blur
+                                </span>
+                            }
+                            key="blur"
+                            >
+                            <div>
+                                <Result
+                                    icon={<Icon type="smile" />}
+                                    title="If you want to blur others' faces, keep going!"
+                                />
+                            </div>
+                            </TabPane>
+                            <TabPane
+                            tab={
+                                <span>
+                                Image
+                                </span>
+                            }
+                            key="image"
+                            >
                             <div>
                                 <div className="resultWrapper">
                                     <Result
-                                        icon={<Icon type="file-image" theme="twoTone" />}
+                                        icon={<Icon type="file-image" />}
                                         title="Upload a transparent image (.png) that you want to replace others' faces!"
                                     />
                                 </div>
@@ -336,24 +359,23 @@ class Page2 extends React.Component {
                                     </Upload>
                                 </div>
                             </div>
-                        }
-                        {
-                            this.state.radioValue === "blur" &&
-                            <div>
-                                <Result
-                                    icon={<Icon type="smile" theme="twoTone"  />}
-                                    title="If you want to blur others' faces, keep going!"
-                                />
-                            </div>
-                        }
+                            </TabPane>
+                        </Tabs>
                     </div>
                     ,
             },
             {
                 title: 'Video',
-                description: 'Upload a Video',
+                description: 'choose either video or real-time',
                 content:
                     <div className="resultWrapper">
+                        <Tabs defaultActiveKey={this.state.videoMode} activeKey={this.state.videoMode} size="large" onChange={this.onVideoModeChange}>
+                            <TabPane
+                            tab={
+                                <span> <Icon type="upload" /> Upload a video </span>
+                            }
+                            key="uploadVideo"
+                            >
                             {
                                 this.state.videoFile === undefined &&
                                 <Dragger {...videoProps}>
@@ -365,7 +387,7 @@ class Page2 extends React.Component {
                                 </Dragger>
                             }
                             {
-                                this.state.videoFile !== undefined && this.state.responseUrl === '' &&
+                                this.state.videoFile !== undefined && responseUrl === '' &&
                                 <Result
                                     status="success"
                                     title="Video is Uploaded"
@@ -376,15 +398,30 @@ class Page2 extends React.Component {
                                 />
                             }
                             {
-                                this.state.responseUrl !== '' &&
+                                responseUrl !== '' &&
                                 <Result
                                     icon={<Icon type="download" />}
                                     title="Get the De-faced Video"
                                     extra={[
-                                        <Button key="buy" onClick={()=> window.open(this.state.responseUrl, "_blank")}>Download</Button>,
+                                        <Button key="buy" onClick={()=> window.open(responseUrl, "_blank")}>Download</Button>,
                                     ]}
                                 />
                             }
+                            </TabPane>
+                            <TabPane
+                                tab={
+                                    <span> <Icon type="video-camera" /> Play with real-time </span>
+                                }
+                                key="realtime"
+                            >
+                            <Result
+                                icon={<Icon type="video-camera" />}
+                                title="Great, let's deface with webcam in real-time!"
+                                subTitle={<div>URL:<Input placeholder="Basic usage" style={{width: 350, marginLeft: 20}}/></div>}
+                                extra={<Button type="primary">Play with real-time</Button>}
+                            />
+                            </TabPane>
+                        </Tabs>
                     </div>,
                 
             },
@@ -402,7 +439,7 @@ class Page2 extends React.Component {
                 fill="none"
                 fillRule="evenodd"
             >
-                {svgChildren}
+                { svgChildren }
             </svg>
             </div>
             <div className="page">
@@ -417,21 +454,28 @@ class Page2 extends React.Component {
                         }
                     </Steps>
                     <div className="steps-content">{steps[current].content}</div>
+                        {
+                            current === 1 && (
+                                <div className="instruction">
+                                    <p>You chose <b>{this.state.radioValue}</b>  for the replacement type.</p>
+                                </div>
+                            ) 
+                        }
                     <div className="steps-action">
                     {
-                        current > 0 && this.state.responseUrl === '' && (
+                        current > 0 && responseUrl === '' && (
                         <Button style={{ marginRight: 8 }} onClick={this.clickPrev}>
                         Previous
                         </Button>
                     )}
                     {
-                        current < steps.length - 1 && this.state.responseUrl === '' && (
+                        current < steps.length - 1 && responseUrl === '' && (
                         <Button type="primary" onClick={() => this.next()} disabled={this.state.targetImgs.length === 0}>
                         Next
                         </Button>
                     )}
                     {
-                        current === steps.length - 1 && this.state.responseUrl === '' &&(
+                        current === steps.length - 1 && responseUrl === '' &&(
                         <Button type="primary" onClick={this.postVideo} disabled={this.state.videoFile === undefined}>
                             Done
                         </Button>

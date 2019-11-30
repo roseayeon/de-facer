@@ -119,7 +119,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
             cover_face = cv2.resize(replace_img, (w, h))
             alpha = cv2.resize(replace_alpha, (w, h))
             frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
-      writer.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+      writer.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
     
     faces = []
     start_idx = i+1
@@ -164,7 +164,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
             cover_face = cv2.resize(replace_img, (w, h))
             alpha = cv2.resize(replace_alpha, (w, h))
             frame[box[1]:box[3], box[0]:box[2]] = face * (1-alpha) + cover_face * alpha
-      writer.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+      writer.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
 
   writer.release()

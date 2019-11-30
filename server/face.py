@@ -20,7 +20,7 @@ REDUCE_RATE = 0.03
 DIFF_THRESHOLD = 0.9
 MAX_FACES_LEN = 200
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-mtcnn = MTCNN(keep_all=True, min_face_size=20, threshold=[0.6, 0.75, 0.9] device=device)
+mtcnn = MTCNN(keep_all=True, min_face_size=20, threshold=[0.6, 0.75, 0.9], device=device)
 resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 
 def get_ms():

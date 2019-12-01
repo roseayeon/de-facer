@@ -36,6 +36,7 @@ We used the [pytorch implementation](https://github.com/timesler/facenet-pytorch
 ### Installing
 
 ```bash
+apt-get install nodejs
 pip3 install torch torchvision flask flask_cors facenet-pytorch opencv-python google-cloud-storage
 
 export GOOGLE_APPLICATION_CREDENTIALS="[PATH TO server/service_key.json]" # Or use own setting
@@ -57,7 +58,7 @@ npm start
 ```
 
 ## Parameter
-You can change the parameter as you wish
+You can change the parameter as you wish in ```server/const.py```.
 ```bash
 MAX_FRAME = 99999999 # fast exit for testing
 FACE_SIZE = 160 # cropped face size

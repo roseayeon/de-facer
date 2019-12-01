@@ -55,5 +55,19 @@ cd web-page
 npm install
 npm start
 ```
+
+## Parameter
+You can change the parameter as you wish
+```bash
+MAX_FRAME = 99999999 # fast exit for testing
+FACE_SIZE = 160 # cropped face size
+REDUCE_RATE = 0.03 # blurring resize factor
+DIFF_THRESHOLD = 0.8 # face embedding distance threshold
+FACE_THRESHOLD = 0.97 # face prob threshold
+MAX_FACES_LEN = 200 # max batch length of FaceNet
+```
+
 ## Reference
 - [Ant Design](https://ant.design/)
+- F. Schroff, D. Kalenichenko, J. Philbin. _FaceNet: A Unified Embedding for Face Recognition and Clustering_, arXiv:1503.03832, 2015. [PDF](https://arxiv.org/pdf/1503.03832)
+- K. Zhang, Z. Zhang, Z. Li and Y. Qiao. _Joint Face Detection and Alignment Using Multitask Cascaded Convolutional Networks_, IEEE Signal Processing Letters, 2016. [PDF](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf)

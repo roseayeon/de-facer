@@ -44,14 +44,14 @@ class FaceRealTime():
     small_frame = Image.fromarray(small_frame))
   
     # Detect faces
-    boxes, face_probs = mtcnn.detect(small_frame) # decrease of face size
+    boxes, face_probs = mtcnn.detect(small_frame)
     if boxes is None:
       return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
     frame_img = Image.fromarray(frame)
     frame_w, frame_h = frame_img.size
     
-    # Draw box of face
+    # Crop box of face
     faces = []
     for box in boxes:
       box = [
@@ -65,6 +65,7 @@ class FaceRealTime():
       face = prewhiten(F.to_tensor(np.float32(face)).to(device))
       faces.append(face)
   
+    # calculate embedding vector
     encodings = resnet(torch.stack(faces)).detach().cpu()
     for encoding, box, prob in zip(encodings, boxes, face_probs):
         # if detected face prob is < THRESHOLD, don't recognize as face
@@ -78,6 +79,7 @@ class FaceRealTime():
         int(min(box[3]*4, frame_h)),
       ]
 
+      # if face is matched target, flag = True
       target_detected = False
       for target_encoding in self.targets_encoding: 
         face_diff = (encoding - target_encoding).norm().item()

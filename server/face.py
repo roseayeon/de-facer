@@ -31,6 +31,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
   print_msg (start_ms, "capture start")
   frames_tracked = []
   batches = []
+  # make batch of frame
   while True:
     success, frame = cap.read()
     if success:
@@ -77,9 +78,11 @@ def process_video(video_path, targets_path, replace_path, output_path):
       face = prewhiten(F.to_tensor(face).to(device))
       faces.append(face)
 
+    # if batch has remain space, continue
     if len(faces) < MAX_FACES_LEN:
       continue
 
+    # get faces' embedding vector
     encodings = resnet(torch.stack(faces)).detach().cpu()
     print_msg(start_ms, "resnet end")
     idx = 0
@@ -145,6 +148,7 @@ def process_video(video_path, targets_path, replace_path, output_path):
         encoding = encodings[idx]
         idx += 1
 
+        # calculate face distance and match to target
         target_detected = False
         for target_encoding in targets_encoding: 
           face_diff = (encoding - target_encoding).norm().item()
@@ -178,5 +182,5 @@ def process_video(video_path, targets_path, replace_path, output_path):
   cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    process_video('../media/videos/yanolja.mp4', ['../media/target/hani.png'], '../media/replace/bomb.png', 'output.mp4')
+    process_video('../media/video/shoemethemoney.mp4', ['../media/target/madclown.png'], '../media/replace/pengsoo.png', 'output.mp4')
 

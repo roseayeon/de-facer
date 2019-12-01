@@ -39,15 +39,15 @@ class FaceRealTime():
     if self.count % 3 != 0:
       return None
   
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     small_frame = cv2.resize(frame, (0,0), fx=0.25, fy=0.25)
-    small_frame = Image.fromarray(cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB))
+    small_frame = Image.fromarray(small_frame))
   
     # Detect faces
     boxes, face_probs = mtcnn.detect(small_frame) # decrease of face size
     if boxes is None:
-      return frame
+      return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame_img = Image.fromarray(frame)
     frame_w, frame_h = frame_img.size
     

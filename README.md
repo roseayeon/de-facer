@@ -32,6 +32,7 @@ We used the [pytorch implementation](https://github.com/timesler/facenet-pytorch
 * Python 3.5+
 * macOS or Linux
 * Node.js 12+
+* Google Cloud Platform(Storage)
 
 ### Installing
 
@@ -39,7 +40,7 @@ We used the [pytorch implementation](https://github.com/timesler/facenet-pytorch
 apt-get install nodejs
 pip3 install torch torchvision flask flask_cors facenet-pytorch opencv-python google-cloud-storage
 
-export GOOGLE_APPLICATION_CREDENTIALS="[PATH TO server/service_key.json]" # Or use own setting
+export GOOGLE_APPLICATION_CREDENTIALS="[GCP Credential File]"
 ```
 
 ## Usage
@@ -58,6 +59,11 @@ npm start
 ```
 
 ## Parameter
+GCP Bucket Settings in ```server/manage.py```
+```bash
+BUCKET_NAME = ""
+```
+
 You can change the parameter as you wish in ```server/const.py```.
 ```bash
 MAX_FRAME = 99999999 # fast exit for testing
